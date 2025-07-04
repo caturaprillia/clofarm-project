@@ -1,4 +1,5 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
+import MainLayout from "./components/layout/MainLayout";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import OnBoarding from "./pages/OnBoarding";
@@ -10,7 +11,11 @@ function App() {
       <Route path="/" element={<OnBoarding />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/tutorial" element={<Tutorial />} />
+      {/* Semua fitur dibungkus MainLayout */}
+      <Route element={<MainLayout />}>
+        <Route path="/tutorial" element={<Tutorial />} />
+        {/* Tambahkan fitur lain di sini */}
+      </Route>
     </Routes>
   );
 }

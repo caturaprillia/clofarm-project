@@ -93,7 +93,7 @@ const SidebarStyles = `
   }
   .sidebar-menu .ant-menu-item-selected a .sidebar-label,
   .sidebar-menu .ant-menu-item:not(.ant-menu-item-selected):hover a .sidebar-label {
-    color: #219150 !important;
+    color: #47C069 !important;
   }
   .sidebar-menu .ant-menu-item-selected .sidebar-icon-wrapper,
   .sidebar-menu .ant-menu-item:not(.ant-menu-item-selected):hover .sidebar-icon-wrapper {

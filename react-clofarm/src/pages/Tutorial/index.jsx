@@ -7,7 +7,7 @@ import {
   SearchOutlined,
 } from '@ant-design/icons';
 import cardImg from '../../assets/images/dumpict.jpg'; // Pastikan path gambar ini benar
-import Sidebar from '../../components/layout/Sidebar';
+
 
 // --- Data Dummy ---
 const mockTutorials = [
@@ -38,58 +38,39 @@ export default function TutorialPage() {
   const [searchHover, setSearchHover] = React.useState(false);
 
   return (
-    <div style={styles.pageContainer}>
-      <header style={styles.pageHeader}>
-        <span style={{ fontWeight: 700, fontSize: '22px' }}>Clofarm</span>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '25px' }}>
-          <button onClick={doLogout} style={styles.headerButton}>
-            <LogoutOutlined /> Sign Out
-          </button>
-          <SettingOutlined style={styles.settingsIcon} />
-        </div>
+    <>
+      <header style={styles.contentHeader}>
+        <h1>Tutorial</h1>
       </header>
 
-      <div style={styles.bodyContainer}>
-        <Sidebar />
-        <main style={styles.mainContent}>
-          <header style={styles.contentHeader}>
-            <h1>Tutorial</h1>
-          </header>
-
-          <div
-            style={{
-              ...styles.searchInputWrapper,
-              borderColor: searchHover ? '#27ae60' : '#d1d5db',
-              boxShadow: searchHover ? '0 0 0 2px #bfe4ce' : 'none',
-            }}
-            onMouseEnter={() => setSearchHover(true)}
-            onMouseLeave={() => setSearchHover(false)}
-          >
-            <SearchOutlined style={{
-              fontSize: 22,
-              color: searchHover ? '#27ae60' : '#b0b7c3',
-              marginRight: 10,
-              transition: 'color 0.2s',
-            }} />
-            <input
-              type="text"
-              placeholder="Search..."
-              style={{ ...styles.searchInput }}
-            />
-          </div>
-          
-          <div style={styles.cardGrid}>
-            {[...mockTutorials, ...mockTutorials].map((tutorial, index) => (
-              <TutorialCard key={`${tutorial.id}-${index}`} {...tutorial} />
-            ))}
-          </div>
-        </main>
+      <div
+        style={{
+          ...styles.searchInputWrapper,
+          borderColor: searchHover ? '#27ae60' : '#d1d5db',
+          boxShadow: searchHover ? '0 0 0 2px #bfe4ce' : 'none',
+        }}
+        onMouseEnter={() => setSearchHover(true)}
+        onMouseLeave={() => setSearchHover(false)}
+      >
+        <SearchOutlined style={{
+          fontSize: 22,
+          color: searchHover ? '#27ae60' : '#b0b7c3',
+          marginRight: 10,
+          transition: 'color 0.2s',
+        }} />
+        <input
+          type="text"
+          placeholder="Search..."
+          style={{ ...styles.searchInput }}
+        />
       </div>
-
-      <footer style={styles.pageFooter}>
-        &copy; {new Date().getFullYear()} Clofarm. All rights reserved.
-      </footer>
-    </div>
+      
+      <div style={styles.cardGrid}>
+        {[...mockTutorials, ...mockTutorials].map((tutorial, index) => (
+          <TutorialCard key={`${tutorial.id}-${index}`} {...tutorial} />
+        ))}
+      </div>
+    </>
   );
 }
 
