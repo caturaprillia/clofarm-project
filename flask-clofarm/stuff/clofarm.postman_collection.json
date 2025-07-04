@@ -1,0 +1,1382 @@
+{
+	"info": {
+		"_postman_id": "c365a6e1-b4eb-432d-b751-12410d7785f5",
+		"name": "clofarm",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39840807"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "nana",
+									"type": "text"
+								},
+								{
+									"key": "phone_number",
+									"value": "08125311559",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "password123",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "nanalele",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/auth/register",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MTQzMjg0NSwianRpIjoiMmZkM2JkNzctNWVhOS00ZWUyLTg2ZGMtMDQ1NjM3ZTUzN2RjIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNzUxNDMyODQ1LCJjc3JmIjoiNjBmYmY4OGQtMDNkNS00MjJjLTkwZTgtZjVlNTM0N2ZkN2NiIiwiZXhwIjoxNzUxNTE5MjQ1fQ.sXeHiS5jby8XVDFNfWiTApFnVRnrY8YJaQkUMCyXdJI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "nana",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "password123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/auth/login",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "lihat data user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MTQzMzk4MCwianRpIjoiOTQxNTUwNmItYTY1ZS00MWRhLWFhODQtMmFmMzQ3ZTEzMmQwIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NTE0MzM5ODAsImNzcmYiOiJlMDM5MzZiYi0zNTE4LTRmZDEtOWIzMy04NTUzZTJhMzlmNjAiLCJleHAiOjE3NTE1MjAzODB9.3G4GtFBedU1xEFQY12CfPmfo3LDisuXH52vXYwYLqyw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/auth/profile",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"auth",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MTQzNDQyMCwianRpIjoiNDI0MjgyNDctMGI3Zi00NDY4LThlMWYtNDRhOTMxY2I4NTY0IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NTE0MzQ0MjAsImNzcmYiOiJmMmQxMzEzNi0xYWIwLTRjMjQtOGQyMy01ZWExN2I2ODFiOTUiLCJleHAiOjE3NTE1MjA4MjB9.uw78mCA-g-HWXjH-0NBEr-wutEUVgrlVeD9fe0db4RA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "nana",
+									"type": "text"
+								},
+								{
+									"key": "photo_url",
+									"value": "https://img.youtube.com/vi/B3e3c-HYw-U/mqdefault.jpg",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/auth/profile",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"auth",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "agrotourism",
+			"item": [
+				{
+					"name": "Lihat Agro",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MTQ0MzI4OCwianRpIjoiNWEwMzY2MDQtMWNmNi00NjU4LTkxMDEtNjgxN2U4NWYwMmU2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NTE0NDMyODgsImNzcmYiOiJlMmJkMzQyOC03NmRmLTQxYzAtYWMxOC1iNGZmYjU4NDJlZjkiLCJleHAiOjE3NTE1Mjk2ODh9.DG78RORwta_Jxqnj5HdetUlKkeiixscY-lJCsYDuzD8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Eco Bike Coffee",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "mmmm",
+									"type": "text"
+								},
+								{
+									"key": "city",
+									"value": "Kintamani",
+									"type": "text"
+								},
+								{
+									"key": "province",
+									"value": "Bali",
+									"type": "text"
+								},
+								{
+									"key": "ticket_price",
+									"value": "Rp. 50.000",
+									"type": "text"
+								},
+								{
+									"key": "image_url",
+									"value": "https://asset-2.tstatic.net/bali/foto/bank/images/kintamani-eco-bike-coffee-salah-satu-kafe-yang-berada-di-bangli-bali.jpg\n",
+									"type": "text"
+								},
+								{
+									"key": "maps_url",
+									"value": "https://www.google.com/maps/place/Kintamani+Coffee+-+Eco+Bike+Coffee/@-8.2695116,115.3436286,17z/data=!3m1!4b1!4m6!3m5!1s0x2dd1f44fe731a7e1:0xa03282dac89d6ce1!8m2!3d-8.2695116!4d115.3436286!16s%2Fg%2F11g8xbddrp?entry=ttu&g_ep=EgoyMDI1MDYyOS4wIKXMDSoASAFQAw%3D%3D\n",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/agrotourism",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"agrotourism"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MTQ0MzI4OCwianRpIjoiNWEwMzY2MDQtMWNmNi00NjU4LTkxMDEtNjgxN2U4NWYwMmU2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NTE0NDMyODgsImNzcmYiOiJlMmJkMzQyOC03NmRmLTQxYzAtYWMxOC1iNGZmYjU4NDJlZjkiLCJleHAiOjE3NTE1Mjk2ODh9.DG78RORwta_Jxqnj5HdetUlKkeiixscY-lJCsYDuzD8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/agrotourism",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"agrotourism"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MTQ0MzI4OCwianRpIjoiNWEwMzY2MDQtMWNmNi00NjU4LTkxMDEtNjgxN2U4NWYwMmU2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NTE0NDMyODgsImNzcmYiOiJlMmJkMzQyOC03NmRmLTQxYzAtYWMxOC1iNGZmYjU4NDJlZjkiLCJleHAiOjE3NTE1Mjk2ODh9.DG78RORwta_Jxqnj5HdetUlKkeiixscY-lJCsYDuzD8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/agrotourism",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"agrotourism"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "articles",
+			"item": [
+				{
+					"name": "Lihat articles",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MTQ0NTE5OSwianRpIjoiNjRhYjlhMTMtYjRkZC00MWJjLWE4ZDUtOGUxMjFjMjk0YTM0IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NTE0NDUxOTksImNzcmYiOiIwNjZhOWUwNi0wZTY0LTQ0YjAtYjk1Yy0zZjY3MmQwMzQyMWQiLCJleHAiOjE3NTE1MzE1OTl9.Q-rLPTLV63R9_9Gu5S9widyH3w73wpq6GeeXWwv68Vo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "Smart Farming Project",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Hydroponic: A Sustainable Farming",
+									"type": "text"
+								},
+								{
+									"key": "article_url",
+									"value": "https://www.imphaltimes.com/articles/hydroponic-a-sustainable-farming/",
+									"type": "text"
+								},
+								{
+									"key": "image_url",
+									"value": "https://imphaltimes.b-cdn.net/wp-content/uploads/2025/07/Hydroponic-A-Sustainable-Farming-optimized.jpg",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/articles",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"articles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MTQ0NTcxMCwianRpIjoiMmRlNTVjOTAtMmM0Mi00NDM3LTk5MTQtOTI1MTJhNTE4MjY2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NTE0NDU3MTAsImNzcmYiOiIwNTEwOWExYi1iZTc3LTRkMDUtYmJjNi02NGU4YTdhZTAwNjgiLCJleHAiOjE3NTE1MzIxMTB9.uE3ahZKjVOWx7CPiqkXtyezZD1JrPz7K8uk2JSl0Fgw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/articles",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"articles"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "tutorials",
+			"item": [
+				{
+					"name": "buat tutorial",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MTQ0NTE5OSwianRpIjoiNjRhYjlhMTMtYjRkZC00MWJjLWE4ZDUtOGUxMjFjMjk0YTM0IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NTE0NDUxOTksImNzcmYiOiIwNjZhOWUwNi0wZTY0LTQ0YjAtYjk1Yy0zZjY3MmQwMzQyMWQiLCJleHAiOjE3NTE1MzE1OTl9.Q-rLPTLV63R9_9Gu5S9widyH3w73wpq6GeeXWwv68Vo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "tutorial menanam cabe",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "cabe enak",
+									"type": "text"
+								},
+								{
+									"key": "thumbnail_url",
+									"value": "https://img.youtube.com/vi/wv4AguW_dmM/sddefault.jpg",
+									"type": "text"
+								},
+								{
+									"key": "tutorial_url",
+									"value": "https://youtube.com/watch?v=wv4AguW_dmM",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/tutorials",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"tutorials"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "lihat tutorial",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "mentorship",
+			"item": [
+				{
+					"name": "buat mentor",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MTQ0ODg0MCwianRpIjoiMmE4OGJmNmUtMmUyYS00NTI3LTlkNjUtNjY4ZWFjODg0ZTUwIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NTE0NDg4NDAsImNzcmYiOiIzYjY1MWJlNy1hMDA1LTRmOTUtODRlZi02MGZkM2Y2YmY4YzciLCJleHAiOjE3NTE1MzUyNDB9.3q5oorZXaVS7U3Hajy0ztVZZkzv_KywZ8ulWfdpSuMw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "SEMINAR NANAM CABE",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "cabenya buat dijual",
+									"type": "text"
+								},
+								{
+									"key": "mentorship_url",
+									"value": "https://chat.whatsapp.com/K9mKp7cCe0WHPv1R3dtRQv?mode=ac_c",
+									"type": "text"
+								},
+								{
+									"key": "image_url",
+									"value": "https://magri.upnjatim.ac.id/wp-content/uploads/2023/09/webinar-1-723x1024.jpeg",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/mentorship",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"mentorship"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "lihat mentor",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MTQ0ODg0MCwianRpIjoiMmE4OGJmNmUtMmUyYS00NTI3LTlkNjUtNjY4ZWFjODg0ZTUwIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NTE0NDg4NDAsImNzcmYiOiIzYjY1MWJlNy1hMDA1LTRmOTUtODRlZi02MGZkM2Y2YmY4YzciLCJleHAiOjE3NTE1MzUyNDB9.3q5oorZXaVS7U3Hajy0ztVZZkzv_KywZ8ulWfdpSuMw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/mentorship",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"mentorship"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "mentorship_regist",
+			"item": [
+				{
+					"name": "New Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MTQ1MTM0MSwianRpIjoiYzZmODM4NTEtMzhmNC00NjJlLWE5MzctYmQ1YmQzMDgzZjExIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NTE0NTEzNDEsImNzcmYiOiJhN2EyZDY4ZC0yM2Y3LTQxMTctODcyYS02MmFkYTZkZWU3OGQiLCJleHAiOjE3NTE1Mzc3NDF9.rPWmLSIrRkY5lT-8-by3Dw35YUIDIGLy1DbYGEMgWiM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id_mentorship",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "lele",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "le@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "phone_number",
+									"value": "081987564258",
+									"type": "text"
+								},
+								{
+									"key": "address",
+									"value": "kos",
+									"type": "text"
+								},
+								{
+									"key": "occupation",
+									"value": "Unemployed",
+									"type": "text"
+								},
+								{
+									"key": "registered_at",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/mentorship_regist",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"mentorship_regist"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MTQ1MTM0MSwianRpIjoiYzZmODM4NTEtMzhmNC00NjJlLWE5MzctYmQ1YmQzMDgzZjExIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NTE0NTEzNDEsImNzcmYiOiJhN2EyZDY4ZC0yM2Y3LTQxMTctODcyYS02MmFkYTZkZWU3OGQiLCJleHAiOjE3NTE1Mzc3NDF9.rPWmLSIrRkY5lT-8-by3Dw35YUIDIGLy1DbYGEMgWiM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id_mentorship",
+									"value": "1",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "name",
+									"value": "lele",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "email",
+									"value": "le@gmail.com",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "phone_number",
+									"value": "081987564258",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "address",
+									"value": "pantai selatan",
+									"type": "text"
+								},
+								{
+									"key": "occupation",
+									"value": "Unemployed",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "registered_at",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/mentorship_regist/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"mentorship_regist",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "community_posts",
+			"item": [
+				{
+					"name": "buat posts",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MTYwMjk3NywianRpIjoiYjZjMjRmN2MtZTg0ZS00ZjU4LTgxMjUtMTcwOWExNWExNGZiIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NTE2MDI5NzcsImNzcmYiOiIzNTA0ZDFlMC00ODQ5LTRiZjMtYmZmNy1mNDg4MDYzYWYxYzQiLCJleHAiOjE3NTE2ODkzNzd9.RZYySNCvKDM2odIBA4QQ6YOoyctKx--j6MDIUogsvGI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "content",
+									"value": "menanam cabe",
+									"type": "text"
+								},
+								{
+									"key": "images_url",
+									"value": "https://farmee.id/wp-content/uploads/2020/10/cara-menanam-selada-hidroponik-1024x1024.jpg",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/community_posts/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"community_posts",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "content",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "image_url",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/community_posts",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"community_posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MTYwMzM3OCwianRpIjoiNjRmNzMwOTMtNWMzZS00NDA0LWEzYjYtZmNjYmVkMTczYmQzIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NTE2MDMzNzgsImNzcmYiOiIzMDQ3M2ViNC03ODA5LTQzMzQtYTZlMS01ZDYzYjhlMDY4MTAiLCJleHAiOjE3NTE2ODk3Nzh9.358LdcmTTgz5VtxJ_CWmK4vaGAoo_JKFH1eYDNDgEsA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/community_posts/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"community_posts",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MTYwMzM3OCwianRpIjoiNjRmNzMwOTMtNWMzZS00NDA0LWEzYjYtZmNjYmVkMTczYmQzIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NTE2MDMzNzgsImNzcmYiOiIzMDQ3M2ViNC03ODA5LTQzMzQtYTZlMS01ZDYzYjhlMDY4MTAiLCJleHAiOjE3NTE2ODk3Nzh9.358LdcmTTgz5VtxJ_CWmK4vaGAoo_JKFH1eYDNDgEsA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "content",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "image_url",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/community_posts/2",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"community_posts",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "community_likes",
+			"item": [
+				{
+					"name": "lihat likes",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MTYwNjQ0MSwianRpIjoiYTJjM2U5NzAtMGFlYi00NzY2LWFmMzMtODQxZWU4ZTczZTQzIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NTE2MDY0NDEsImNzcmYiOiIwMmQ0OWIyYi01YzE3LTQ3OGUtOTRjYi0xNjE1MjliMTM2NWIiLCJleHAiOjE3NTE2OTI4NDF9.sVILWLgqFaEepVQ_1pHzo9BBaxmZaLHN-Ti74HMogDs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/community_likes",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"community_likes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MTYwNjcxNCwianRpIjoiMGJjNzI2NmMtNTJkMS00Y2RiLWE5MTAtYjA1NTA0NTA3YzI2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NTE2MDY3MTQsImNzcmYiOiJlZDdmOTdlZS1jZmI0LTQxMzEtYTlmYy1lOGFmZDMxODdlODAiLCJleHAiOjE3NTE2OTMxMTR9.ykCfd_nvui6T23kOXADxwSkAxtArrBc1vNaduus6Xwg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id_community_posts",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/community_likes",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"community_likes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MTYwNjcxNCwianRpIjoiMGJjNzI2NmMtNTJkMS00Y2RiLWE5MTAtYjA1NTA0NTA3YzI2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NTE2MDY3MTQsImNzcmYiOiJlZDdmOTdlZS1jZmI0LTQxMzEtYTlmYy1lOGFmZDMxODdlODAiLCJleHAiOjE3NTE2OTMxMTR9.ykCfd_nvui6T23kOXADxwSkAxtArrBc1vNaduus6Xwg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id_community_posts",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/community_likes",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"community_likes"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "community_comment",
+			"item": [
+				{
+					"name": "buat komen",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MTYwNzk4MywianRpIjoiYzA0OTRiYmYtNjE4Yi00MGVjLWJhYzUtNjdlMWIzMDNiYzNhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjIiLCJuYmYiOjE3NTE2MDc5ODMsImNzcmYiOiIwMGY2MWNiNC0zMGYyLTQ4ZTYtYjFiYS0zMWZkOWUyMzdmNjQiLCJleHAiOjE3NTE2OTQzODN9.7YNkt_gP7bdUN8-Tg-X0sUyM0bXaHZPx80BXhYgMeaQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id_community_posts",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "comment",
+									"value": "keren sekali!",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/community_comments",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"community_comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MTYwODI1MywianRpIjoiODk4MjFkMzEtMDg3MS00MjEyLTgyM2ItNGU0NTQzOGY5MmZlIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjIiLCJuYmYiOjE3NTE2MDgyNTMsImNzcmYiOiI4OTdmZTZmMS1hNjMwLTQyYjctODRiYy00MzI3N2UxYzE0ZGQiLCJleHAiOjE3NTE2OTQ2NTN9.UgS1pn2-n1sfhyzXtB4Rp9pQkHyADkEQac5oRHS_Xmk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "comment",
+									"value": "asik",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/community_comments/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"community_comments",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "lihat",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MTYwNzk4MywianRpIjoiYzA0OTRiYmYtNjE4Yi00MGVjLWJhYzUtNjdlMWIzMDNiYzNhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjIiLCJuYmYiOjE3NTE2MDc5ODMsImNzcmYiOiIwMGY2MWNiNC0zMGYyLTQ4ZTYtYjFiYS0zMWZkOWUyMzdmNjQiLCJleHAiOjE3NTE2OTQzODN9.7YNkt_gP7bdUN8-Tg-X0sUyM0bXaHZPx80BXhYgMeaQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/community_comments/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"community_comments",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "agrotourism_reviews",
+			"item": [
+				{
+					"name": "buat ripiu",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MTYxMDI5MiwianRpIjoiYzc3ZGM1NTctMmE2ZS00ZWMwLWI2YjAtNGZlMWYzNjc5NWU1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjIiLCJuYmYiOjE3NTE2MTAyOTIsImNzcmYiOiJlNDY1NWI0Yy05NmE2LTQxYmEtYjI3Zi02OTgxZWEyOTJiNzMiLCJleHAiOjE3NTE2OTY2OTJ9.AeZ0h4Bur-zyZkh8TPzKGdfyc1Ro0561L2Kr3FdvU7g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id_agrowisata",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "rating",
+									"value": "5",
+									"type": "text"
+								},
+								{
+									"key": "review_text",
+									"value": "tempat ini luar biasa",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/agrotourism_reviews",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"agrotourism_reviews"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "edit",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MTYxMDI5MiwianRpIjoiYzc3ZGM1NTctMmE2ZS00ZWMwLWI2YjAtNGZlMWYzNjc5NWU1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjIiLCJuYmYiOjE3NTE2MTAyOTIsImNzcmYiOiJlNDY1NWI0Yy05NmE2LTQxYmEtYjI3Zi02OTgxZWEyOTJiNzMiLCJleHAiOjE3NTE2OTY2OTJ9.AeZ0h4Bur-zyZkh8TPzKGdfyc1Ro0561L2Kr3FdvU7g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id_agrowisata",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "rating",
+									"value": "4",
+									"type": "text"
+								},
+								{
+									"key": "review_text",
+									"value": "tempat ini luar biasa",
+									"type": "text"
+								},
+								{
+									"key": "image_url",
+									"value": "https://imphaltimes.b-cdn.net/wp-content/uploads/2025/07/Hydroponic-A-Sustainable-Farming-optimized.jpg",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/agrotourism_reviews/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"agrotourism_reviews",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1MTYxMDI5MiwianRpIjoiYzc3ZGM1NTctMmE2ZS00ZWMwLWI2YjAtNGZlMWYzNjc5NWU1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjIiLCJuYmYiOjE3NTE2MTAyOTIsImNzcmYiOiJlNDY1NWI0Yy05NmE2LTQxYmEtYjI3Zi02OTgxZWEyOTJiNzMiLCJleHAiOjE3NTE2OTY2OTJ9.AeZ0h4Bur-zyZkh8TPzKGdfyc1Ro0561L2Kr3FdvU7g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id_agrowisata",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "rating",
+									"value": "5",
+									"type": "text"
+								},
+								{
+									"key": "review_text",
+									"value": "tempat ini luar biasa",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/agrotourism_reviews/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"agrotourism_reviews",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
