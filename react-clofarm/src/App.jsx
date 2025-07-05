@@ -10,6 +10,7 @@ import Home from "./pages/Home";
 import Agrotourism from "./pages/Agrotourism";
 import Community from "./pages/Community";
 import Mentorship from "./pages/Mentorship";
+import MentorshipDetail from "./pages/Mentorship/mentorshipdetail";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/agrotourism" element={<Agrotourism />} />
         <Route path="/community" element={<Community />} />
         <Route path="/mentorship" element={<Mentorship />} />
+        <Route path="/mentorship/:id" element={<MentorshipDetail />} />
         {/* Tambahkan fitur lain di sini */}
       </Route>
     </Routes>
