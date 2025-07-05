@@ -24,6 +24,7 @@ function App() {
         <Route path="/tutorial" element={<Tutorial />} />
         <Route path="/article" element={<Article />} />
         <Route path="/agrotourism" element={<Agrotourism />} />
+        <Route path="/agrotourism/:id" element={<Agrotourism />} />
         <Route path="/community" element={<Community />} />
         <Route path="/mentorship" element={<Mentorship />} />
         <Route path="/mentorship/:id" element={<MentorshipDetail />} />

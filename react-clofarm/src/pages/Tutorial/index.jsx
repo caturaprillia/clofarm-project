@@ -1,12 +1,10 @@
-// Nama file: /pages/tutorial/index.jsx atau /components/TutorialPage.jsx
-
 import React from 'react';
 import {
   LogoutOutlined,
   SettingOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
-import cardImg from '../../assets/images/dumpict.jpg'; // Pastikan path gambar ini benar
+import cardImg from '../../assets/images/dumpict.jpg';
 
 
 // --- Data Dummy ---
@@ -32,45 +30,66 @@ const TutorialCard = ({ title, description }) => (
 
 // --- Komponen Utama Halaman ---
 export default function TutorialPage() {
-  const doLogout = () => {
-    alert('Tombol Sign Out diklik!');
-  };
   const [searchHover, setSearchHover] = React.useState(false);
 
   return (
-    <>
-      <header style={styles.contentHeader}>
-        <h1>Tutorial</h1>
-      </header>
-
-      <div
-        style={{
-          ...styles.searchInputWrapper,
-          borderColor: searchHover ? '#27ae60' : '#d1d5db',
-          boxShadow: searchHover ? '0 0 0 2px #bfe4ce' : 'none',
-        }}
-        onMouseEnter={() => setSearchHover(true)}
-        onMouseLeave={() => setSearchHover(false)}
-      >
-        <SearchOutlined style={{
-          fontSize: 22,
-          color: searchHover ? '#27ae60' : '#b0b7c3',
-          marginRight: 10,
-          transition: 'color 0.2s',
-        }} />
-        <input
-          type="text"
-          placeholder="Search..."
-          style={{ ...styles.searchInput }}
-        />
+    <div style={{ background: '#f9fafb', minHeight: '100vh', width: '100%' }}>
+      <div style={{
+        background: '#fff',
+        borderRadius: 14,
+        boxShadow: '0 4px 24px 0 rgba(0,0,0,0.08)',
+        padding: '25px 30px',
+        maxWidth: 1200,
+        margin: '0 auto 30px auto',
+        boxSizing: 'border-box',
+      }}>
+        <h1 style={{ fontSize: '2.1rem', fontWeight: 700, marginBottom: 32, letterSpacing: 1 }}>Tutorial</h1>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            background: '#fff',
+            border: `2px solid ${searchHover ? '#27ae60' : '#d1d5db'}`,
+            borderRadius: '8px',
+            padding: '0 16px',
+            height: '48px',
+            marginBottom: 32,
+            maxWidth: 980,
+            width: '100%',
+            boxShadow: searchHover ? '0 0 0 2px #bfe4ce' : 'none',
+            transition: 'border-color 0.2s, box-shadow 0.2s',
+          }}
+          onMouseEnter={() => setSearchHover(true)}
+          onMouseLeave={() => setSearchHover(false)}
+        >
+          <SearchOutlined style={{
+            fontSize: 22,
+            color: searchHover ? '#27ae60' : '#b0b7c3',
+            marginRight: 10,
+            transition: 'color 0.2s',
+          }} />
+          <input
+            type="text"
+            placeholder="Search..."
+            style={{
+              width: '100%',
+              height: '100%',
+              padding: 0,
+              fontSize: '16px',
+              border: 'none',
+              outline: 'none',
+              background: 'transparent',
+              margin: 0,
+            }}
+          />
+        </div>
+        <div style={{ ...styles.cardGrid, marginTop: 10 }}>
+          {[...mockTutorials, ...mockTutorials].map((tutorial, index) => (
+            <TutorialCard key={`${tutorial.id}-${index}`} {...tutorial} />
+          ))}
+        </div>
       </div>
-      
-      <div style={styles.cardGrid}>
-        {[...mockTutorials, ...mockTutorials].map((tutorial, index) => (
-          <TutorialCard key={`${tutorial.id}-${index}`} {...tutorial} />
-        ))}
-      </div>
-    </>
+    </div>
   );
 }
 
