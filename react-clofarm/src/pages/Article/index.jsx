@@ -130,7 +130,7 @@ const Article = () => {
   return (
     <div
       style={{
-        padding: "0px 20px 0 20px",
+        padding: "0px 2px 0 2px",
         background: "#f9fafb",
         minHeight: "100vh",
         overflowY: "auto",
@@ -172,7 +172,7 @@ const Article = () => {
             marginBottom: "30px",
             boxShadow: searchHover ? "0 0 0 2px #bfe4ce" : "none",
             transition: "border-color 0.2s, box-shadow 0.2s",
-            maxWidth: 950,
+            maxWidth: 985,
             width: "100%",
           }}
           onMouseEnter={() => setSearchHover(true)}

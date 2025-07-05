@@ -54,7 +54,7 @@ export default function TutorialPage() {
             padding: '0 16px',
             height: '48px',
             marginBottom: 32,
-            maxWidth: 980,
+            maxWidth: 995,
             width: '100%',
             boxShadow: searchHover ? '0 0 0 2px #bfe4ce' : 'none',
             transition: 'border-color 0.2s, box-shadow 0.2s',

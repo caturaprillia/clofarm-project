@@ -1,55 +1,65 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { SearchOutlined, EnvironmentOutlined, DollarCircleOutlined, StarFilled, MoreOutlined } from "@ant-design/icons";
+import {
+  SearchOutlined,
+  EnvironmentOutlined,
+  DollarCircleOutlined,
+  StarFilled,
+  MoreOutlined,
+} from "@ant-design/icons";
 import dumpict from "../../assets/images/dumpict.jpg";
 import { notification, Dropdown, Menu, Popconfirm } from "antd";
 
 // Data Dummy
 const dummyData = [
-    {
-        id: 1,
-        name: "Clofarm",
-        city: "Tabanan",
-        province: "Bali",
-        price: "Rp50.000",
-        image: dumpict,
-        description: "Clofarm adalah destinasi agrowisata edukasi dan rekreasi keluarga di tengah alam pedesaan yang asri.",
-        rating: 4.8,
-        gmaps: "https://maps.google.com/?q=Desa+Beraban+Kediri",
-    },
-    {
-        id: 2,
-        name: "Jatiluwih Rice Terraces",
-        city: "Jatiluwih",
-        province: "Bali",
-        price: "Rp40.000",
-        image: dumpict,
-        description: "Jatiluwih menawarkan pemandangan sawah terasering yang menakjubkan dan udara sejuk pegunungan.",
-        rating: 4.7,
-        gmaps: "https://maps.google.com/?q=Jatiluwih+Penebel",
-    },
-    {
-        id: 3,
-        name: "Tegalalang Farm",
-        city: "Gianyar",
-        province: "Bali",
-        price: "Rp25.000",
-        image: dumpict,
-        description: "Tegalalang Farm cocok untuk wisata keluarga dan edukasi pertanian modern di Bali.",
-        rating: 4.6,
-        gmaps: "https://maps.google.com/?q=Tegalalang+Gianyar",
-    },
-    {
-        id: 4,
-        name: "Big Tree Farms Bamboo",
-        city: "Abiansemal",
-        province: "Bali",
-        price: "Rp75.000",
-        image: dumpict,
-        description: "Wisata pertanian organik dengan arsitektur bambu terbesar di dunia.",
-        rating: 4.9,
-        gmaps: "https://maps.google.com/?q=Sibang+Kaja+Abiansemal",
-    },
+  {
+    id: 1,
+    name: "Clofarm",
+    city: "Tabanan",
+    province: "Bali",
+    price: "Rp50.000",
+    image: dumpict,
+    description:
+      "Clofarm adalah destinasi agrowisata edukasi dan rekreasi keluarga di tengah alam pedesaan yang asri.",
+    rating: 4.8,
+    gmaps: "https://maps.google.com/?q=Desa+Beraban+Kediri",
+  },
+  {
+    id: 2,
+    name: "Jatiluwih Rice Terraces",
+    city: "Jatiluwih",
+    province: "Bali",
+    price: "Rp40.000",
+    image: dumpict,
+    description:
+      "Jatiluwih menawarkan pemandangan sawah terasering yang menakjubkan dan udara sejuk pegunungan.",
+    rating: 4.7,
+    gmaps: "https://maps.google.com/?q=Jatiluwih+Penebel",
+  },
+  {
+    id: 3,
+    name: "Tegalalang Farm",
+    city: "Gianyar",
+    province: "Bali",
+    price: "Rp25.000",
+    image: dumpict,
+    description:
+      "Tegalalang Farm cocok untuk wisata keluarga dan edukasi pertanian modern di Bali.",
+    rating: 4.6,
+    gmaps: "https://maps.google.com/?q=Tegalalang+Gianyar",
+  },
+  {
+    id: 4,
+    name: "Big Tree Farms Bamboo",
+    city: "Abiansemal",
+    province: "Bali",
+    price: "Rp75.000",
+    image: dumpict,
+    description:
+      "Wisata pertanian organik dengan arsitektur bambu terbesar di dunia.",
+    rating: 4.9,
+    gmaps: "https://maps.google.com/?q=Sibang+Kaja+Abiansemal",
+  },
 ];
 
 // Dummy reviews sesuai struktur tabel
@@ -72,7 +82,8 @@ const initialDummyReviews = [
     profilePic: "https://i.pravatar.cc/41",
     rating: 5,
     review_text: "Tempatnya bagus dan edukatif!",
-    url_images: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=200&q=80",
+    url_images:
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=200&q=80",
   },
 ];
 
@@ -206,13 +217,23 @@ const DUMMY_USER = {
 
 function StarRating({ value, onChange }) {
   return (
-    <div style={{ fontSize: 28, color: "#bbb", marginBottom: 8, cursor: "pointer" }}>
+    <div
+      style={{
+        fontSize: 28,
+        color: "#bbb",
+        marginBottom: 8,
+        cursor: "pointer",
+      }}
+    >
       {[1, 2, 3, 4, 5].map((star) => (
         <span
           key={star}
-          style={{ color: star <= value ? "#27ae60" : "#bbb", transition: "color 0.2s" }}
+          style={{
+            color: star <= value ? "#27ae60" : "#bbb",
+            transition: "color 0.2s",
+          }}
           onClick={() => onChange(star)}
-          onMouseOver={e => e.target.style.cursor = 'pointer'}
+          onMouseOver={(e) => (e.target.style.cursor = "pointer")}
         >
           ★
         </span>
@@ -222,35 +243,49 @@ function StarRating({ value, onChange }) {
 }
 
 const MainCard = ({ children }) => (
-  <div style={{
-    padding: "25px 30px",
-    borderRadius: "14px",
-    margin: "0 auto 30px auto",
-    maxWidth: "1200px",
-    boxSizing: "border-box",
-    background: "#fff",
-    boxShadow: "0 4px 24px 0 rgba(0,0,0,0.08)",
-  }}>
+  <div
+    style={{
+      padding: "25px 30px",
+      borderRadius: "14px",
+      margin: "0 auto 30px auto",
+      maxWidth: "1200px",
+      boxSizing: "border-box",
+      background: "#fff",
+      boxShadow: "0 4px 24px 0 rgba(0,0,0,0.08)",
+    }}
+  >
     {children}
   </div>
 );
 
 const CURRENT_USER_ID = 999; // dummy user id
 
-function ReviewCard({ username, profilePic, rating, comment, photo, id_user, isOwn, onDelete, onEdit }) {
+function ReviewCard({
+  username,
+  profilePic,
+  rating,
+  comment,
+  photo,
+  id_user,
+  isOwn,
+  onDelete,
+  onEdit,
+}) {
   return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'flex-start',
-      border: '1px solid #888',
-      borderRadius: 8,
-      padding: 20,
-      marginBottom: 18,
-      background: '#fff',
-      gap: 24,
-      minHeight: 120,
-      position: 'relative',
-    }}>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "flex-start",
+        border: "1px solid #888",
+        borderRadius: 8,
+        padding: 20,
+        marginBottom: 18,
+        background: "#fff",
+        gap: 24,
+        minHeight: 120,
+        position: "relative",
+      }}
+    >
       {isOwn && (
         <Dropdown
           overlay={
@@ -267,7 +302,7 @@ function ReviewCard({ username, profilePic, rating, comment, photo, id_user, isO
                   cancelText="Cancel"
                   okType="danger"
                 >
-                  <span style={{ color: 'red' }}>Delete</span>
+                  <span style={{ color: "red" }}>Delete</span>
                 </Popconfirm>
               </Menu.Item>
             </Menu>
@@ -275,24 +310,84 @@ function ReviewCard({ username, profilePic, rating, comment, photo, id_user, isO
           trigger={["click"]}
           placement="bottomRight"
         >
-          <MoreOutlined style={{ position: 'absolute', top: 16, right: 16, fontSize: 22, color: '#888', cursor: 'pointer' }} />
+          <MoreOutlined
+            style={{
+              position: "absolute",
+              top: 16,
+              right: 16,
+              fontSize: 22,
+              color: "#888",
+              cursor: "pointer",
+            }}
+          />
         </Dropdown>
       )}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-          <img src={profilePic} alt={username} style={{ width: 32, height: 32, borderRadius: '50%', background: '#eee' }} />
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            marginBottom: 4,
+          }}
+        >
+          <img
+            src={profilePic}
+            alt={username}
+            style={{
+              width: 32,
+              height: 32,
+              borderRadius: "50%",
+              background: "#eee",
+            }}
+          />
           <span style={{ fontWeight: 500 }}>{username}</span>
         </div>
-        <div style={{ color: '#27ae60', fontSize: 18, marginBottom: 4 }}>
-          {[1,2,3,4,5].map(i => <span key={i} style={{ color: i <= rating ? '#27ae60' : '#bbb' }}>★</span>)}
+        <div style={{ color: "#27ae60", fontSize: 18, marginBottom: 4 }}>
+          {[1, 2, 3, 4, 5].map((i) => (
+            <span key={i} style={{ color: i <= rating ? "#27ae60" : "#bbb" }}>
+              ★
+            </span>
+          ))}
         </div>
-        <div style={{ fontSize: 20, fontWeight: 400, marginBottom: 0, color: '#222', lineHeight: 1.3 }}>{comment}</div>
+        <div
+          style={{
+            fontSize: 20,
+            fontWeight: 400,
+            marginBottom: 0,
+            color: "#222",
+            lineHeight: 1.3,
+          }}
+        >
+          {comment}
+        </div>
       </div>
-      <div style={{ width: 140, height: 140, background: '#ddd', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginRight: 16 }}>
+      <div
+        style={{
+          width: 140,
+          height: 140,
+          background: "#ddd",
+          borderRadius: 4,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexShrink: 0,
+          marginRight: 16,
+        }}
+      >
         {photo ? (
-          <img src={photo} alt="review" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 4 }} />
+          <img
+            src={photo}
+            alt="review"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              borderRadius: 4,
+            }}
+          />
         ) : (
-          <span style={{ color: '#666', fontSize: 16 }}>*Photo*</span>
+          <span style={{ color: "#666", fontSize: 16 }}>*Photo*</span>
         )}
       </div>
     </div>
@@ -305,10 +400,17 @@ function AgrotourismDetail() {
   const [rating, setRating] = React.useState(0);
   const [review, setReview] = React.useState("");
   const [photoURL, setPhotoURL] = React.useState("");
-  const [reviews, setReviews] = React.useState(initialDummyReviews.filter(r => String(r.id_agrowisata) === String(id)));
+  const [reviews, setReviews] = React.useState(
+    initialDummyReviews.filter((r) => String(r.id_agrowisata) === String(id))
+  );
   const [editReviewId, setEditReviewId] = React.useState(null);
 
-  if (!data) return <MainCard><div>Agrotourism not found.</div></MainCard>;
+  if (!data)
+    return (
+      <MainCard>
+        <div>Agrotourism not found.</div>
+      </MainCard>
+    );
 
   const handleCancel = () => {
     setRating(0);
@@ -317,8 +419,10 @@ function AgrotourismDetail() {
   };
 
   const handleDeleteReview = (id_agrowisata_reviews) => {
-    setReviews(prev => prev.filter(r => r.id_agrowisata_reviews !== id_agrowisata_reviews));
-    notification.success({ message: 'Review deleted!' });
+    setReviews((prev) =>
+      prev.filter((r) => r.id_agrowisata_reviews !== id_agrowisata_reviews)
+    );
+    notification.success({ message: "Review deleted!" });
     // Jika sedang edit review yang dihapus, reset form
     if (editReviewId === id_agrowisata_reviews) {
       setEditReviewId(null);
@@ -343,16 +447,18 @@ function AgrotourismDetail() {
     }
     if (editReviewId) {
       // Update review
-      setReviews(prev => prev.map(r =>
-        r.id_agrowisata_reviews === editReviewId
-          ? { ...r, rating, review_text: review, url_images: photoURL }
-          : r
-      ));
+      setReviews((prev) =>
+        prev.map((r) =>
+          r.id_agrowisata_reviews === editReviewId
+            ? { ...r, rating, review_text: review, url_images: photoURL }
+            : r
+        )
+      );
       notification.success({ message: "Review updated successfully!" });
       setEditReviewId(null);
     } else {
       // Tambahkan review baru ke array
-      setReviews(prev => [
+      setReviews((prev) => [
         ...prev,
         {
           id_agrowisata_reviews: Date.now(),
@@ -363,7 +469,7 @@ function AgrotourismDetail() {
           rating,
           review_text: review,
           url_images: photoURL,
-        }
+        },
       ]);
       notification.success({ message: "Review submitted successfully!" });
     }
@@ -374,62 +480,312 @@ function AgrotourismDetail() {
 
   return (
     <MainCard>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 32, alignItems: "flex-start" }}>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 32,
+          alignItems: "flex-start",
+        }}
+      >
         <div style={{ flex: 1, minWidth: 260 }}>
-          <h2 style={{ fontSize: "1.5rem", fontWeight: 700, marginBottom: 10 }}>{data.name}</h2>
+          <h2 style={{ fontSize: "1.5rem", fontWeight: 700, marginBottom: 10 }}>
+            {data.name}
+          </h2>
           <div style={{ color: "#222", fontSize: 16, marginBottom: 18 }}>
             <div>{data.description}</div>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 18, marginBottom: 8 }}>
-            <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 18 }}>
-              <DollarCircleOutlined style={{ color: "#27ae60", fontSize: 20 }} />
-              <span style={{ fontWeight: 500, fontSize: 18, color: "#222" }}>{data.price}</span>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 18,
+              marginBottom: 8,
+            }}
+          >
+            <span
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                fontSize: 18,
+              }}
+            >
+              <DollarCircleOutlined
+                style={{ color: "#27ae60", fontSize: 20 }}
+              />
+              <span style={{ fontWeight: 500, fontSize: 18, color: "#222" }}>
+                {data.price}
+              </span>
             </span>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              marginBottom: 8,
+            }}
+          >
             <StarFilled style={{ color: "#27ae60", fontSize: 20 }} />
-            <span style={{ fontWeight: 500, fontSize: 18, color: "#222" }}>{data.rating}</span>
+            <span style={{ fontWeight: 500, fontSize: 18, color: "#222" }}>
+              {data.rating}
+            </span>
           </div>
         </div>
-        <div style={{ flex: 1, minWidth: 320, display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <img src={data.image} alt={data.name} style={{ width: 370, height: 200, objectFit: "cover", borderRadius: 16, marginBottom: 10 }} />
-          <div style={{ fontWeight: 600, fontSize: 20, letterSpacing: 1, textAlign: "center", marginTop: 8 }}>{data.city}, {data.province}</div>
-          <a href={data.gmaps} target="_blank" rel="noopener noreferrer" style={{
-            marginTop: 10,
-            background: "#27ae60",
-            color: "#fff",
-            border: "none",
-            borderRadius: 16,
-            padding: "6px 22px",
-            fontWeight: 600,
-            fontSize: 15,
-            cursor: "pointer",
-            textDecoration: "none",
-            display: "inline-block",
-            textAlign: "center"
-          }}>VISIT</a>
+        <div
+          style={{
+            flex: 1,
+            minWidth: 320,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <img
+            src={data.image}
+            alt={data.name}
+            style={{
+              width: 370,
+              height: 200,
+              objectFit: "cover",
+              borderRadius: 16,
+              marginBottom: 10,
+            }}
+          />
+          <div
+            style={{
+              fontWeight: 600,
+              fontSize: 20,
+              letterSpacing: 1,
+              textAlign: "center",
+              marginTop: 8,
+            }}
+          >
+            {data.city}, {data.province}
+          </div>
+          <a
+            href={data.gmaps}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              marginTop: 10,
+              background: "#27ae60",
+              color: "#fff",
+              border: "none",
+              borderRadius: 8,
+              padding: "6px 22px",
+              fontWeight: 600,
+              fontSize: 15,
+              cursor: "pointer",
+              textDecoration: "none",
+              display: "inline-block",
+              textAlign: "center",
+            }}
+          >
+            VISIT
+          </a>
         </div>
       </div>
-      <h2 style={{ fontSize: "1.3rem", fontWeight: 700, margin: "38px 0 16px 0" }}>{data.name} Reviews</h2>
-      <form onSubmit={handleSubmit} style={{ border: "1px solid #bbb", borderRadius: 10, padding: 24, background: "#fafbfc", position: "relative", width: "90%", marginBottom: 32 }}>
-        <div style={{ fontWeight: 600, fontSize: 17, marginBottom: 12, display: "flex", alignItems: "center", gap: 8 }}>
-          <img src="https://img.icons8.com/ios-filled/24/27ae60/feedback.png" alt="review" style={{ width: 22, height: 22 }} />
+      <h2
+        style={{ fontSize: "1.3rem", fontWeight: 700, margin: "38px 0 16px 0" }}
+      >
+        {data.name} Reviews
+      </h2>
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          border: "1px solid #bbb",
+          borderRadius: 10,
+          padding: 24,
+          background: "#fafbfc",
+          position: "relative",
+          width: "90%",
+          marginBottom: 32,
+          fontFamily: "Poppins, sans-serif",
+        }}
+      >
+        <div
+          style={{
+            fontWeight: 600,
+            fontSize: 17,
+            marginBottom: 12,
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            fontFamily: "Poppins, sans-serif",
+          }}
+        >
+          <img
+            src="https://img.icons8.com/ios-filled/24/27ae60/feedback.png"
+            alt="review"
+            style={{ width: 22, height: 22 }}
+          />
           Write a Review
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-          <img src={DUMMY_USER.profilePic} alt="profile" style={{ width: 38, height: 38, borderRadius: "50%", objectFit: "cover" }} />
-          <span style={{ fontWeight: 500 }}>{DUMMY_USER.username}</span>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            marginBottom: 8,
+            fontFamily: "Poppins, sans-serif",
+          }}
+        >
+          <img
+            src={DUMMY_USER.profilePic}
+            alt="profile"
+            style={{
+              width: 38,
+              height: 38,
+              borderRadius: "50%",
+              objectFit: "cover",
+            }}
+          />
+          <span style={{ fontWeight: 500 }}> {DUMMY_USER.username} </span>
         </div>
         <StarRating value={rating} onChange={setRating} />
-        <textarea placeholder="Share your experience about this place" style={{ width: "100%", minHeight: 48, borderRadius: 6, border: "1px solid #bbb", padding: 8, marginBottom: 8, resize: "vertical" }} value={review} onChange={e => setReview(e.target.value)} />
-        <div style={{ fontSize: 14, marginBottom: 4 }}><span style={{ color: "#e74c3c" }}>*</span> Photo URL</div>
-        <input type="text" placeholder="https://your-photo-url.com" style={{ marginBottom: 12, width: "100%", borderRadius: 6, border: "1px solid #bbb", padding: 6 }} value={photoURL} onChange={e => setPhotoURL(e.target.value)} />
+        <textarea
+          placeholder="Share your experience about this place"
+          style={{
+            width: "100%",
+            minHeight: 48,
+            borderRadius: 6,
+            border: "1px solid #e5e7eb",
+            padding: 8,
+            marginBottom: 8,
+            resize: "vertical",
+            fontFamily: "Poppins, sans-serif",
+            fontSize: 16,
+            outline: "none",
+            transition: "border-color 0.2s",
+          }}
+          value={review}
+          onChange={(e) => setReview(e.target.value)}
+          onFocus={(e) => {
+            e.target.style.borderColor = "#27ae60";
+            e.target.style.outline = "none";
+          }}
+          onBlur={(e) => {
+            e.target.style.borderColor = "#e5e7eb";
+            e.target.style.outline = "none";
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.borderColor = "#27ae60";
+          }}
+          onMouseLeave={(e) => {
+            if (document.activeElement !== e.target) {
+              e.target.style.borderColor = "#e5e7eb";
+            }
+          }}
+        />
+        <div
+          style={{
+            fontSize: 14,
+            marginBottom: 4,
+            fontFamily: "Poppins, sans-serif",
+          }}
+        >
+          <span style={{ color: "#e74c3c" }}>*</span> Photo URL
+        </div>
+        <input
+          type="text"
+          placeholder="https://your-photo-url.com"
+          style={{
+            marginBottom: 12,
+            width: "100%",
+            borderRadius: 6,
+            border: "1px solid #e5e7eb",
+            padding: 6,
+            fontFamily: "Poppins, sans-serif",
+            fontSize: 16,
+            outline: "none",
+            transition: "border-color 0.2s",
+          }}
+          value={photoURL}
+          onChange={(e) => setPhotoURL(e.target.value)}
+          onFocus={(e) => {
+            e.target.style.borderColor = "#27ae60";
+            e.target.style.outline = "none";
+          }}
+          onBlur={(e) => {
+            e.target.style.borderColor = "#e5e7eb";
+            e.target.style.outline = "none";
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.borderColor = "#27ae60";
+          }}
+          onMouseLeave={(e) => {
+            if (document.activeElement !== e.target) {
+              e.target.style.borderColor = "#e5e7eb";
+            }
+          }}
+        />
         {editReviewId && (
-          <div style={{ color: '#27ae60', fontWeight: 500, marginBottom: 8 }}>Editing your review...</div>
+          <div
+            style={{
+              color: "#27ae60",
+              fontWeight: 500,
+              marginBottom: 8,
+              fontFamily: "Poppins, sans-serif",
+            }}
+          >
+            Editing your review...
+          </div>
         )}
         <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
-          <button type="button" onClick={handleCancel} style={{ background: "none", border: "none", color: "#888", fontWeight: 500, fontSize: 15, cursor: "pointer" }}>Cancel</button>
-          <button type="submit" style={{ background: "#27ae60", color: "#fff", border: "none", borderRadius: 16, padding: "6px 22px", fontWeight: 600, fontSize: 15, cursor: "pointer" }}>Submit</button>
+          <button
+            type="button"
+            onClick={handleCancel}
+            style={{
+              background: "none",
+              border: "none",
+              color: "#888",
+              fontWeight: 500,
+              fontSize: 15,
+              cursor: "pointer",
+              fontFamily: "Poppins, sans-serif",
+              padding: "6px 22px",
+              borderRadius: 8,
+            }}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            style={{
+              background:
+                !rating || !review.trim() || !photoURL.trim()
+                  ? "#bfe4ce"
+                  : "#27ae60",
+              color: "#fff",
+              border: "none",
+              borderRadius: 8,
+              padding: "6px 22px",
+              fontWeight: 600,
+              fontSize: 15,
+              cursor:
+                !rating || !review.trim() || !photoURL.trim()
+                  ? "not-allowed"
+                  : "pointer",
+              opacity: !rating || !review.trim() || !photoURL.trim() ? 0.7 : 1,
+              fontFamily: "Poppins, sans-serif",
+              transition: "background 0.2s, opacity 0.2s",
+            }}
+            disabled={!rating || !review.trim() || !photoURL.trim()}
+            onMouseEnter={(e) => {
+              if (rating && review.trim() && photoURL.trim()) {
+                e.target.style.background = "#219150";
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (rating && review.trim() && photoURL.trim()) {
+                e.target.style.background = "#27ae60";
+              }
+            }}
+          >
+            Submit
+          </button>
         </div>
       </form>
       {/* Render review dari array dummy */}
@@ -464,12 +820,18 @@ function AgrotourismList() {
     <MainCard>
       <h1 style={styles.title}>Agrotourism</h1>
       <div
-        style={{ ...styles.searchWrapper, ...(searchHover ? styles.searchWrapperHover : {}) }}
+        style={{
+          ...styles.searchWrapper,
+          ...(searchHover ? styles.searchWrapperHover : {}),
+        }}
         onMouseEnter={() => setSearchHover(true)}
         onMouseLeave={() => setSearchHover(false)}
       >
         <SearchOutlined
-          style={{ ...styles.searchIcon, ...(searchHover ? styles.searchIconHover : {}) }}
+          style={{
+            ...styles.searchIcon,
+            ...(searchHover ? styles.searchIconHover : {}),
+          }}
         />
         <input
           type="text"
@@ -481,7 +843,11 @@ function AgrotourismList() {
       </div>
       <div style={styles.grid}>
         {filteredData.map((item) => (
-          <AgrotourismCard key={item.id} {...item} onClick={() => navigate(`/agrotourism/${item.id}`)} />
+          <AgrotourismCard
+            key={item.id}
+            {...item}
+            onClick={() => navigate(`/agrotourism/${item.id}`)}
+          />
         ))}
       </div>
     </MainCard>

@@ -1,8 +1,8 @@
 // Nama file: Sidebar.jsx
 
-import React from 'react';
-import { Menu } from 'antd';
-import { NavLink, useLocation } from 'react-router-dom';
+import React from "react";
+import { Menu } from "antd";
+import { NavLink, useLocation } from "react-router-dom";
 import {
   HomeOutlined,
   TeamOutlined,
@@ -10,27 +10,33 @@ import {
   UserSwitchOutlined,
   ReadOutlined,
   FileTextOutlined,
-} from '@ant-design/icons';
+} from "@ant-design/icons";
+import Logo from "../../assets/images/Logo.png";
 
 // CSS Sidebar sesuai gambar referensi
 const SidebarStyles = `
   .sidebar-container {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
     width: 280px;
     background: #fff;
     min-height: 100vh;
     border-right: 1px solid #e5e7eb;
-    padding: 32px 0;
+    padding: 12px 0;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: flex-start;
+    flex-grow: 0;
+    z-index: 100;
   }
   .sidebar-logo {
-    width: 50px;
-    height: 50px;
-    background: #47C069;
-    border-radius: 50%;
-    margin-bottom: 40px;
+    width: 120px;
+    height: 120px;
+    margin-bottom: 12px;
     flex-shrink: 0;
   }
   .sidebar-menu.ant-menu {
@@ -108,23 +114,88 @@ const SidebarStyles = `
 `;
 
 const menuItems = [
-    { key: '/home', label: <NavLink to="/home"><span className="sidebar-icon-wrapper"><HomeOutlined /></span><span className="sidebar-label">Home</span></NavLink> },
-    { key: '/community', label: <NavLink to="/community"><span className="sidebar-icon-wrapper"><TeamOutlined /></span><span className="sidebar-label">Community</span></NavLink> },
-    { key: '/agrotourism', label: <NavLink to="/agrotourism"><span className="sidebar-icon-wrapper"><EnvironmentOutlined /></span><span className="sidebar-label">Agrotourism</span></NavLink> },
-    { key: '/mentorship', label: <NavLink to="/mentorship"><span className="sidebar-icon-wrapper"><UserSwitchOutlined /></span><span className="sidebar-label">Mentorship</span></NavLink> },
-    { key: '/tutorial', label: <NavLink to="/tutorial"><span className="sidebar-icon-wrapper"><ReadOutlined /></span><span className="sidebar-label">Tutorial</span></NavLink> },
-    { key: '/article', label: <NavLink to="/article"><span className="sidebar-icon-wrapper"><FileTextOutlined /></span><span className="sidebar-label">Article</span></NavLink> },
-  ];
+  {
+    key: "/home",
+    label: (
+      <NavLink to="/home">
+        <span className="sidebar-icon-wrapper">
+          <HomeOutlined />
+        </span>
+        <span className="sidebar-label">Home</span>
+      </NavLink>
+    ),
+  },
+  {
+    key: "/community",
+    label: (
+      <NavLink to="/community">
+        <span className="sidebar-icon-wrapper">
+          <TeamOutlined />
+        </span>
+        <span className="sidebar-label">Community</span>
+      </NavLink>
+    ),
+  },
+  {
+    key: "/agrotourism",
+    label: (
+      <NavLink to="/agrotourism">
+        <span className="sidebar-icon-wrapper">
+          <EnvironmentOutlined />
+        </span>
+        <span className="sidebar-label">Agrotourism</span>
+      </NavLink>
+    ),
+  },
+  {
+    key: "/mentorship",
+    label: (
+      <NavLink to="/mentorship">
+        <span className="sidebar-icon-wrapper">
+          <UserSwitchOutlined />
+        </span>
+        <span className="sidebar-label">Mentorship</span>
+      </NavLink>
+    ),
+  },
+  {
+    key: "/tutorial",
+    label: (
+      <NavLink to="/tutorial">
+        <span className="sidebar-icon-wrapper">
+          <ReadOutlined />
+        </span>
+        <span className="sidebar-label">Tutorial</span>
+      </NavLink>
+    ),
+  },
+  {
+    key: "/article",
+    label: (
+      <NavLink to="/article">
+        <span className="sidebar-icon-wrapper">
+          <FileTextOutlined />
+        </span>
+        <span className="sidebar-label">Article</span>
+      </NavLink>
+    ),
+  },
+];
 
 function Sidebar() {
   const location = useLocation();
-  const selectedKey = '/' + location.pathname.split('/')[1];
+  const selectedKey = "/" + location.pathname.split("/")[1];
 
   return (
     <>
       <style>{SidebarStyles}</style>
       <aside className="sidebar-container">
-        <div className="sidebar-logo"></div>
+        <img
+          src={Logo}
+          alt="Logo"
+          className="sidebar-logo"
+          style={{ objectFit: "contain" }}
+        />
         <Menu
           theme="light"
           mode="inline"
