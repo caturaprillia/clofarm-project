@@ -4,6 +4,8 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import OnBoarding from "./pages/OnBoarding";
 import Tutorial from "./pages/Tutorial";
+import Artikel from "./pages/Article";
+import Article from "./pages/Article";
 
 function App() {
   return (
@@ -14,6 +16,7 @@ function App() {
       {/* Semua fitur dibungkus MainLayout */}
       <Route element={<MainLayout />}>
         <Route path="/tutorial" element={<Tutorial />} />
+        <Route path="/article" element={<Article />} />
         {/* Tambahkan fitur lain di sini */}
       </Route>
     </Routes>
