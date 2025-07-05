@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { SearchOutlined, EnvironmentOutlined, DollarCircleOutlined, StarFilled } from "@ant-design/icons";
+import { SearchOutlined, EnvironmentOutlined, DollarCircleOutlined, StarFilled, MoreOutlined } from "@ant-design/icons";
 import dumpict from "../../assets/images/dumpict.jpg";
-import { notification } from "antd";
+import { notification, Dropdown, Menu, Popconfirm } from "antd";
 
 // Data Dummy
 const dummyData = [
@@ -50,6 +50,30 @@ const dummyData = [
         rating: 4.9,
         gmaps: "https://maps.google.com/?q=Sibang+Kaja+Abiansemal",
     },
+];
+
+// Dummy reviews sesuai struktur tabel
+const initialDummyReviews = [
+  {
+    id_agrowisata_reviews: 1,
+    id_agrowisata: 1,
+    id_user: 101,
+    username: "Username",
+    profilePic: "https://i.pravatar.cc/40",
+    rating: 3,
+    review_text: "Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet",
+    url_images: null,
+  },
+  {
+    id_agrowisata_reviews: 2,
+    id_agrowisata: 1,
+    id_user: 102,
+    username: "Jane Doe",
+    profilePic: "https://i.pravatar.cc/41",
+    rating: 5,
+    review_text: "Tempatnya bagus dan edukatif!",
+    url_images: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=200&q=80",
+  },
 ];
 
 // Objek Styles dipindahkan ke atas agar bisa diakses
@@ -211,12 +235,78 @@ const MainCard = ({ children }) => (
   </div>
 );
 
+const CURRENT_USER_ID = 999; // dummy user id
+
+function ReviewCard({ username, profilePic, rating, comment, photo, id_user, isOwn, onDelete, onEdit }) {
+  return (
+    <div style={{
+      display: 'flex',
+      alignItems: 'flex-start',
+      border: '1px solid #888',
+      borderRadius: 8,
+      padding: 20,
+      marginBottom: 18,
+      background: '#fff',
+      gap: 24,
+      minHeight: 120,
+      position: 'relative',
+    }}>
+      {isOwn && (
+        <Dropdown
+          overlay={
+            <Menu>
+              <Menu.Item key="edit" onClick={onEdit}>
+                Edit
+              </Menu.Item>
+              <Menu.Item key="delete">
+                <Popconfirm
+                  title="Delete Review"
+                  description="Are you sure you want to delete this review?"
+                  onConfirm={onDelete}
+                  okText="Delete"
+                  cancelText="Cancel"
+                  okType="danger"
+                >
+                  <span style={{ color: 'red' }}>Delete</span>
+                </Popconfirm>
+              </Menu.Item>
+            </Menu>
+          }
+          trigger={["click"]}
+          placement="bottomRight"
+        >
+          <MoreOutlined style={{ position: 'absolute', top: 16, right: 16, fontSize: 22, color: '#888', cursor: 'pointer' }} />
+        </Dropdown>
+      )}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+          <img src={profilePic} alt={username} style={{ width: 32, height: 32, borderRadius: '50%', background: '#eee' }} />
+          <span style={{ fontWeight: 500 }}>{username}</span>
+        </div>
+        <div style={{ color: '#27ae60', fontSize: 18, marginBottom: 4 }}>
+          {[1,2,3,4,5].map(i => <span key={i} style={{ color: i <= rating ? '#27ae60' : '#bbb' }}>★</span>)}
+        </div>
+        <div style={{ fontSize: 20, fontWeight: 400, marginBottom: 0, color: '#222', lineHeight: 1.3 }}>{comment}</div>
+      </div>
+      <div style={{ width: 140, height: 140, background: '#ddd', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginRight: 16 }}>
+        {photo ? (
+          <img src={photo} alt="review" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 4 }} />
+        ) : (
+          <span style={{ color: '#666', fontSize: 16 }}>*Photo*</span>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function AgrotourismDetail() {
   const { id } = useParams();
   const data = dummyData.find((item) => String(item.id) === String(id));
   const [rating, setRating] = React.useState(0);
   const [review, setReview] = React.useState("");
   const [photoURL, setPhotoURL] = React.useState("");
+  const [reviews, setReviews] = React.useState(initialDummyReviews.filter(r => String(r.id_agrowisata) === String(id)));
+  const [editReviewId, setEditReviewId] = React.useState(null);
 
   if (!data) return <MainCard><div>Agrotourism not found.</div></MainCard>;
 
@@ -226,13 +316,57 @@ function AgrotourismDetail() {
     setPhotoURL("");
   };
 
+  const handleDeleteReview = (id_agrowisata_reviews) => {
+    setReviews(prev => prev.filter(r => r.id_agrowisata_reviews !== id_agrowisata_reviews));
+    notification.success({ message: 'Review deleted!' });
+    // Jika sedang edit review yang dihapus, reset form
+    if (editReviewId === id_agrowisata_reviews) {
+      setEditReviewId(null);
+      setRating(0);
+      setReview("");
+      setPhotoURL("");
+    }
+  };
+
+  const handleEditReview = (review) => {
+    setEditReviewId(review.id_agrowisata_reviews);
+    setRating(review.rating);
+    setReview(review.review_text);
+    setPhotoURL(review.url_images || "");
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!rating || !review.trim() || !photoURL.trim()) {
       notification.error({ message: "Please complete all fields!" });
       return;
     }
-    notification.success({ message: "Review submitted successfully!" });
+    if (editReviewId) {
+      // Update review
+      setReviews(prev => prev.map(r =>
+        r.id_agrowisata_reviews === editReviewId
+          ? { ...r, rating, review_text: review, url_images: photoURL }
+          : r
+      ));
+      notification.success({ message: "Review updated successfully!" });
+      setEditReviewId(null);
+    } else {
+      // Tambahkan review baru ke array
+      setReviews(prev => [
+        ...prev,
+        {
+          id_agrowisata_reviews: Date.now(),
+          id_agrowisata: Number(id),
+          id_user: CURRENT_USER_ID, // dummy user id
+          username: "John Doe", // dummy username
+          profilePic: "https://i.pravatar.cc/100",
+          rating,
+          review_text: review,
+          url_images: photoURL,
+        }
+      ]);
+      notification.success({ message: "Review submitted successfully!" });
+    }
     setRating(0);
     setReview("");
     setPhotoURL("");
@@ -277,7 +411,7 @@ function AgrotourismDetail() {
         </div>
       </div>
       <h2 style={{ fontSize: "1.3rem", fontWeight: 700, margin: "38px 0 16px 0" }}>{data.name} Reviews</h2>
-      <form onSubmit={handleSubmit} style={{ border: "1px solid #bbb", borderRadius: 10, padding: 24, background: "#fafbfc", position: "relative", width: "90%" }}>
+      <form onSubmit={handleSubmit} style={{ border: "1px solid #bbb", borderRadius: 10, padding: 24, background: "#fafbfc", position: "relative", width: "90%", marginBottom: 32 }}>
         <div style={{ fontWeight: 600, fontSize: 17, marginBottom: 12, display: "flex", alignItems: "center", gap: 8 }}>
           <img src="https://img.icons8.com/ios-filled/24/27ae60/feedback.png" alt="review" style={{ width: 22, height: 22 }} />
           Write a Review
@@ -290,11 +424,31 @@ function AgrotourismDetail() {
         <textarea placeholder="Share your experience about this place" style={{ width: "100%", minHeight: 48, borderRadius: 6, border: "1px solid #bbb", padding: 8, marginBottom: 8, resize: "vertical" }} value={review} onChange={e => setReview(e.target.value)} />
         <div style={{ fontSize: 14, marginBottom: 4 }}><span style={{ color: "#e74c3c" }}>*</span> Photo URL</div>
         <input type="text" placeholder="https://your-photo-url.com" style={{ marginBottom: 12, width: "100%", borderRadius: 6, border: "1px solid #bbb", padding: 6 }} value={photoURL} onChange={e => setPhotoURL(e.target.value)} />
+        {editReviewId && (
+          <div style={{ color: '#27ae60', fontWeight: 500, marginBottom: 8 }}>Editing your review...</div>
+        )}
         <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
           <button type="button" onClick={handleCancel} style={{ background: "none", border: "none", color: "#888", fontWeight: 500, fontSize: 15, cursor: "pointer" }}>Cancel</button>
           <button type="submit" style={{ background: "#27ae60", color: "#fff", border: "none", borderRadius: 16, padding: "6px 22px", fontWeight: 600, fontSize: 15, cursor: "pointer" }}>Submit</button>
         </div>
       </form>
+      {/* Render review dari array dummy */}
+      <div style={{ width: "95%" }}>
+        {reviews.map((r) => (
+          <ReviewCard
+            key={r.id_agrowisata_reviews}
+            username={r.username}
+            profilePic={r.profilePic}
+            rating={r.rating}
+            comment={r.review_text}
+            photo={r.url_images}
+            id_user={r.id_user}
+            isOwn={r.id_user === CURRENT_USER_ID}
+            onDelete={() => handleDeleteReview(r.id_agrowisata_reviews)}
+            onEdit={() => handleEditReview(r)}
+          />
+        ))}
+      </div>
     </MainCard>
   );
 }
