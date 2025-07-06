@@ -1,4 +1,5 @@
 import React from "react";
+import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 
 const navbarStyle = {
   position: "fixed",
@@ -94,6 +95,7 @@ const styles = {
     background: "#f5f7fa",
     paddingTop: "64px",
     boxSizing: "border-box",
+    paddingBottom: 0,
   },
   onboardLeft: {
     flex: "1 1 0",
@@ -101,8 +103,8 @@ const styles = {
     display: "flex",
     alignItems: "flex-start",
     justifyContent: "center",
-    paddingTop: "100px",
-    paddingLeft: "60px",
+    paddingTop: "120px",
+    paddingLeft: "24px",
   },
   onboardImg: {
     position: "relative",
@@ -119,7 +121,7 @@ const styles = {
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "flex-start",
-    padding: "90px 7vw 0 7vw",
+    padding: "120px 3vw 0 3vw",
   },
   onboardTitle: {
     fontSize: "2.7rem",
@@ -201,20 +203,20 @@ const styles = {
     display: "block",
   },
   aboutDesc: {
-    fontSize: "1.1rem",
+    fontSize: "1.35rem",
     color: "#222",
     marginTop: "1.5rem",
     maxWidth: "500px",
     lineHeight: 1.6,
   },
   aboutImg: {
-    width: 500,
-    height: 500,
-    objectFit: "contain",
-    flex: "0 0 300px",
+    position: "relative",
+    width: 360,
+    height: 360,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    flex: "0 0 300px",
   },
   // Section 3
   section3: {
@@ -249,76 +251,80 @@ const styles = {
 // Tambahkan style untuk fitur card
 const featureCardStyles = {
   container: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "flex-start",
-    gap: "28px",
-    margin: "0 0 24px 0",
+    display: "grid",
+    gridTemplateColumns: "repeat(4, 1fr)",
+    gap: "25px",
     width: "100%",
     maxWidth: "1200px",
-    flexWrap: "wrap",
-    boxSizing: "border-box",
+    margin: "0 auto",
+    justifyItems: "center",
+    alignItems: "stretch",
+    padding: "24px 0 0 0",
+    marginBottom: 0,
   },
   card: {
     background: "#fff",
-    borderRadius: 12,
-    boxShadow: "0 2px 8px 0 rgba(0,0,0,0.07)",
-    overflow: "hidden",
-    width: 272,
-    minHeight: 270,
+    border: "1px solid #e5e7eb",
+    borderRadius: "12px",
+    boxShadow: "0 1px 3px 0 rgba(0,0,0,0.05)",
+    width: "100%",
+    padding: 0,
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
-    position: "relative",
-    transition: "transform 0.2s, box-shadow 0.2s",
+    alignItems: "stretch",
+    fontFamily: "Poppins, sans-serif",
+    transition: "box-shadow 0.18s, transform 0.18s",
     cursor: "pointer",
   },
   cardHover: {
-    transform: "translateY(-8px) scale(1.03)",
-    boxShadow: "0 8px 24px 0 rgba(50,169,96,0.13)",
+    boxShadow: "0 4px 16px rgba(76,175,80,0.15)",
+    transform: "translateY(-4px)",
   },
   image: {
     width: "100%",
-    height: 140,
+    height: 190,
     objectFit: "cover",
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
+    borderTopLeftRadius: "12px",
+    borderTopRightRadius: "12px",
+    marginBottom: 0,
+  },
+  content: {
+    padding: "15px",
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
   },
   title: {
     fontWeight: 600,
-    fontSize: 18,
-    color: "#222e3a",
-    margin: "16px 0 8px 16px",
-    textAlign: "left",
+    fontSize: "19px",
+    marginBottom: "8px",
+    color: "#111827",
+    fontFamily: "Poppins, sans-serif",
   },
   desc: {
-    fontSize: 14,
-    color: "#444",
-    margin: "0 16px 16px 16px",
-    textAlign: "left",
-    minHeight: 40,
+    color: "#6b7280",
+    fontSize: "16px",
+    marginBottom: "18px",
+    fontFamily: "Poppins, sans-serif",
+    lineHeight: 1.5,
   },
-  overlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    // background: "rgba(39,174,96,0.92)",
+  button: {
+    background: "#27ae60",
     color: "#fff",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    opacity: 0,
-    transition: "opacity 0.2s",
-    borderRadius: 12,
-    zIndex: 2,
-    padding: 20,
-    textAlign: "center",
+    border: "none",
+    borderRadius: 8,
+    padding: "10px 0",
+    fontWeight: 600,
+    fontSize: "16.5px",
+    cursor: "pointer",
+    width: "100%",
+    fontFamily: "Poppins, sans-serif",
+    marginTop: "auto",
+    transition: "background 0.18s",
   },
-  overlayShow: {
-    opacity: 1,
+  buttonHover: {
+    background: "#219150",
   },
   pagination: {
     display: "flex",
@@ -331,28 +337,29 @@ const featureCardStyles = {
 
 const featureData = [
   {
-    img: "/src/assets/images/dumpict.jpg",
-    title: "Home",
-    desc: "Smart farming platform for everyone.",
-    overlay: "Explore more about Clofarm!",
+    img: "/src/assets/images/community.jpeg",
+    title: "Community",
+    desc: "A space for farmers and agriculture enthusiasts to share experiences, discuss ideas, and build connections.",
   },
   {
-    img: "/src/assets/images/dumpict.jpg",
+    img: "/src/assets/images/agrotourism.jpeg",
     title: "Agrotourism",
-    desc: "Connect with farmers and experts.",
-    overlay: "Join the community!",
+    desc: "Provides information and promotion of farm-based tourism to introduce agricultural life to the public.",
   },
   {
-    img: "/src/assets/images/dumpict.jpg",
+    img: "/src/assets/images/mentorship.jpg",
     title: "Mentorship",
-    desc: "Learn with interactive tutorials.",
-    overlay: "Start learning now!",
+    desc: "Offers guidance from agricultural experts to help users improve their skills and knowledge.",
   },
   {
-    img: "/src/assets/images/dumpict.jpg",
+    img: "/src/assets/images/tutorial.jpeg",
     title: "Tutorial",
-    desc: "Agrotourism and more.",
-    overlay: "Discover agrotourism!",
+    desc: "Step-by-step guides on modern farming techniques that are easy to follow.",
+  },
+  {
+    img: "/src/assets/images/article.jpeg",
+    title: "Articles",
+    desc: "A collection of informative articles on trends, technologies, and tips in the agricultural world.",
   },
 ];
 
@@ -368,10 +375,10 @@ function FeatureCard({ img, title, desc, overlay }) {
       onMouseLeave={() => setHover(false)}
     >
       <img src={img} alt={title} style={featureCardStyles.image} />
-      <div style={featureCardStyles.title}>
-        <b>{title}</b>
+      <div style={featureCardStyles.content}>
+        <div style={featureCardStyles.title}>{title}</div>
+        <div style={featureCardStyles.desc}>{desc}</div>
       </div>
-      <div style={featureCardStyles.desc}>{desc}</div>
     </div>
   );
 }
@@ -379,7 +386,6 @@ function FeatureCard({ img, title, desc, overlay }) {
 const navMenus = [
   { label: "Home", href: "#hero" },
   { label: "About Us", href: "#about" },
-  { label: "Features", href: "#features" },
 ];
 
 function Navbar() {
@@ -387,16 +393,31 @@ function Navbar() {
   const [active, setActive] = React.useState("Home");
   const [loginHover, setLoginHover] = React.useState(false);
 
-  // Update active menu on hash change (for anchor navigation)
+  // Scroll spy: update active menu on scroll
   React.useEffect(() => {
-    const onHashChange = () => {
-      const hash = window.location.hash || "#hero";
-      const found = navMenus.find((m) => m.href === hash);
-      setActive(found ? found.label : "Home");
+    const handleScroll = () => {
+      const sections = [
+        { label: "Home", id: "hero" },
+        { label: "About Us", id: "about" },
+      ];
+      const offset = 64; // tinggi navbar
+      let found = "Home";
+      let minTop = Number.POSITIVE_INFINITY;
+      for (let i = 0; i < sections.length; i++) {
+        const el = document.getElementById(sections[i].id);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top - offset <= 0 && Math.abs(rect.top - offset) < minTop) {
+            found = sections[i].label;
+            minTop = Math.abs(rect.top - offset);
+          }
+        }
+      }
+      setActive(found);
     };
-    window.addEventListener("hashchange", onHashChange);
-    onHashChange();
-    return () => window.removeEventListener("hashchange", onHashChange);
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
@@ -447,6 +468,16 @@ function Navbar() {
 
 function OnBoarding() {
   const [hover, setHover] = React.useState(false);
+  const [featurePage, setFeaturePage] = React.useState(0); // 0: first 4, 1: Articles
+  const cardsPerPage = 4;
+  const totalPages = Math.ceil(featureData.length / cardsPerPage);
+
+  const pagedFeatures = [];
+  for (let i = 0; i < totalPages; i++) {
+    pagedFeatures.push(
+      featureData.slice(i * cardsPerPage, (i + 1) * cardsPerPage)
+    );
+  }
 
   return (
     <>
@@ -492,45 +523,132 @@ function OnBoarding() {
 
       {/* About Us Section */}
       <section id="about" style={styles.aboutSection}>
-        <div style={styles.aboutContainer}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            maxWidth: "1200px",
+            margin: "0 auto",
+            gap: "40px",
+            padding: "0 40px",
+            flexWrap: "wrap",
+          }}
+        >
           <div style={styles.aboutText}>
             <h2 style={styles.aboutTitle}>About Us</h2>
-            {/* <h3 style={styles.aboutBrand}>Clofarm</h3> */}
             <p style={styles.aboutDesc}>
               CloFarm is a smart farming platform that connects farmers and
-              agricultural enthusiasts through innovation and collaboration.
-              With features like Community, Agrotourism, Mentorship, Tutorials,
-              and Articles, CloFarm supports users in learning, growing, and
-              sharing knowledge. Its simple and user-friendly interface makes it
-              easy to explore agricultural insights and build meaningful
-              connections in the farming world.
+              agricultural enthusiasts through innovation. With features like
+              Community, Agrotourism, and Mentorship, it helps users learn,
+              grow, and share knowledge in a simple, user-friendly way.
             </p>
           </div>
-          <img
-            src="/src/assets/images/ilustrasi.png" // GANTI DI SINI
-            alt="Clofarm Logo"
-            style={styles.aboutImg}
-          />
-        </div>
-      </section>
-
-      {/* Section 3 */}
-      <section id="features" style={styles.section3}>
-        <div style={styles.section3Container}>
-          <h2 style={styles.section3Title}>Features</h2>
-          <div style={featureCardStyles.container}>
-            {featureData.slice(0, 4).map((item, idx) => (
-              <FeatureCard key={idx} {...item} />
-            ))}
-          </div>
-          <div style={featureCardStyles.pagination}>
-            <div
+          <div
+            style={{
+              position: "relative",
+              width: 340,
+              height: 340,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <img
+              src="/src/assets/images/ilustrasi.png"
+              alt="Clofarm Circle Large"
               style={{
-                ...featureCardStyles.dot,
-                ...featureCardStyles.dotActive,
+                width: 320,
+                height: 320,
+                borderRadius: "50%",
+                objectFit: "cover",
+                boxShadow: "0 4px 20px 0 rgba(0,0,0,0.13)",
+                position: "absolute",
+                left: 0,
+                top: 0,
+                zIndex: 1,
               }}
             />
-            <div style={featureCardStyles.dot} />
+            <img
+              src="/src/assets/images/ilustrasi2.jpeg"
+              alt="Clofarm Circle Small"
+              style={{
+                width: 135,
+                height: 135,
+                borderRadius: "50%",
+                objectFit: "cover",
+                boxShadow: "0 2px 8px 0 rgba(0,0,0,0.13)",
+                position: "absolute",
+                left: -20,
+                top: 200,
+                zIndex: 2,
+                border: "6px solid #fff",
+              }}
+            />
+          </div>
+        </div>
+        <div
+          style={{
+            maxWidth: "1200px",
+            margin: "48px auto 0 auto",
+            padding: "0 40px 0 40px",
+          }}
+          id="features"
+        >
+          <h2 style={styles.section3Title}>Features Clofarm</h2>
+          <div style={featureCardStyles.container}>
+            {pagedFeatures[featurePage].map((item, idx) => (
+              <FeatureCard key={idx} {...item} />
+            ))}
+            {/* Jika halaman terakhir kurang dari 4 card, tambahkan card kosong */}
+            {pagedFeatures[featurePage].length < cardsPerPage &&
+              Array(cardsPerPage - pagedFeatures[featurePage].length)
+                .fill(null)
+                .map((_, idx) => (
+                  <div
+                    key={"empty-" + idx}
+                    style={{ background: "transparent" }}
+                  />
+                ))}
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: 16,
+              marginTop: 16,
+            }}
+          >
+            <button
+              onClick={() => setFeaturePage(featurePage - 1)}
+              disabled={featurePage === 0}
+              style={{
+                border: "none",
+                background: "transparent",
+                cursor: featurePage === 0 ? "not-allowed" : "pointer",
+                fontSize: 24,
+                padding: 8,
+                opacity: featurePage === 0 ? 0.4 : 1,
+              }}
+            >
+              <LeftOutlined />
+            </button>
+            <button
+              onClick={() => setFeaturePage(featurePage + 1)}
+              disabled={featurePage === totalPages - 1}
+              style={{
+                border: "none",
+                background: "transparent",
+                cursor:
+                  featurePage === totalPages - 1 ? "not-allowed" : "pointer",
+                fontSize: 24,
+                padding: 8,
+                opacity: featurePage === totalPages - 1 ? 0.4 : 1,
+              }}
+            >
+              <RightOutlined />
+            </button>
           </div>
         </div>
       </section>
