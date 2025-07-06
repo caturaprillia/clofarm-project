@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { UploadOutlined } from "@ant-design/icons";
-import { Button, Input, DatePicker, Radio, Form, message } from "antd";
+import { Button, Input, Form, message } from "antd";
 
 const Profile = () => {
   const [form] = Form.useForm();
@@ -8,7 +8,21 @@ const Profile = () => {
     "https://api.dicebear.com/7.x/adventurer-neutral/svg?seed=Eka"
   );
   const [emailVerified] = useState(true);
-  const [gender, setGender] = useState("female");
+  const [isAllFilled, setIsAllFilled] = useState(false);
+
+  // Default data
+  const defaultValues = {
+    name: "Eka Putri Jayanti",
+    email: "eka.putri.jayanti@student.undiksha.ac.id",
+    phone: "085858230833",
+  };
+
+  // Check if all required fields are filled
+  const checkAllFilled = (changed, all) => {
+    const values = { ...defaultValues, ...form.getFieldsValue(), ...all };
+    const required = [values.name, values.email, values.phone];
+    setIsAllFilled(required.every((v) => v && v.trim() !== ""));
+  };
 
   const handleUpload = () => {
     message.info("Fitur upload belum diimplementasikan.");
@@ -17,12 +31,12 @@ const Profile = () => {
   return (
     <div
       style={{
-        maxWidth: 520,
+        maxWidth: 820,
         margin: "32px auto",
         background: "#fff",
         borderRadius: 18,
         boxShadow: "0 4px 24px 0 rgba(0,0,0,0.08)",
-        padding: "36px 36px 28px 36px",
+        padding: "36px 48px 28px 48px",
         fontFamily: "Poppins, sans-serif",
       }}
     >
@@ -67,9 +81,7 @@ const Profile = () => {
           target="_blank"
           rel="noopener noreferrer"
           style={{ color: "#1677ff", fontSize: 15, marginBottom: 2 }}
-        >
-          Gunakan Karakter Avatar
-        </a>
+        ></a>
         <div
           style={{
             color: "#888",
@@ -86,55 +98,27 @@ const Profile = () => {
       <Form
         form={form}
         layout="vertical"
-        initialValues={{
-          firstName: "Eka",
-          lastName: "Putri Jayanti",
-          email: "eka.putri.jayanti@student.undiksha.ac.id",
-          phone: "085858230833",
-          gender: "female",
-          bio: "",
-        }}
+        initialValues={defaultValues}
+        onValuesChange={checkAllFilled}
         onFinish={() => message.success("Profil disimpan!")}
       >
-        <div style={{ display: "flex", gap: 12 }}>
-          <Form.Item
-            label={
-              <span style={{ fontWeight: 500 }}>
-                <span style={{ color: "#e74c3c" }}>*</span> Nama Depan
-              </span>
-            }
-            name="firstName"
-            style={{ flex: 1, marginBottom: 12 }}
-            rules={[{ required: true, message: "Nama depan wajib diisi" }]}
-          >
-            <Input size="large" />
-          </Form.Item>
-          <Form.Item
-            label={
-              <span style={{ fontWeight: 500 }}>
-                <span style={{ color: "#e74c3c" }}>*</span> Nama Belakang
-              </span>
-            }
-            name="lastName"
-            style={{ flex: 1, marginBottom: 12 }}
-            rules={[{ required: true, message: "Nama belakang wajib diisi" }]}
-          >
-            <Input size="large" />
-          </Form.Item>
-        </div>
         <Form.Item
-          label={
-            <span style={{ fontWeight: 500 }}>
-              <span style={{ color: "#e74c3c" }}>*</span> Alamat Email
-            </span>
-          }
+          label={<span style={{ fontWeight: 500 }}>Nama</span>}
+          name="name"
+          style={{ marginBottom: 12 }}
+          rules={[{ required: true, message: "Nama wajib diisi" }]}
+        >
+          <Input size="large" />
+        </Form.Item>
+        <Form.Item
+          label={<span style={{ fontWeight: 500 }}>Alamat Email</span>}
           name="email"
           style={{ marginBottom: 4 }}
           rules={[
             { required: true, type: "email", message: "Masukkan email valid" },
           ]}
         >
-          <Input size="large" disabled />
+          <Input size="large" />
         </Form.Item>
         <div
           style={{
@@ -153,62 +137,25 @@ const Profile = () => {
         <Form.Item
           label={<span style={{ fontWeight: 500 }}>Nomor WhatsApp</span>}
           name="phone"
-          style={{ marginBottom: 12 }}
-        >
-          <Input size="large" />
-        </Form.Item>
-        <div style={{ display: "flex", gap: 12 }}>
-          <Form.Item
-            label={<span style={{ fontWeight: 500 }}>Tanggal Lahir</span>}
-            name="birth"
-            style={{ flex: 1, marginBottom: 12 }}
-          >
-            <DatePicker
-              size="large"
-              style={{ width: "100%" }}
-              placeholder="Pilih tanggal"
-              format="DD-MM-YYYY"
-            />
-          </Form.Item>
-          <Form.Item
-            label={<span style={{ fontWeight: 500 }}>Jenis Kelamin</span>}
-            name="gender"
-            style={{ flex: 1, marginBottom: 12 }}
-          >
-            <Radio.Group
-              onChange={(e) => setGender(e.target.value)}
-              value={gender}
-              style={{ width: "100%" }}
-            >
-              <Radio value="male">Laki-laki</Radio>
-              <Radio value="female">Perempuan</Radio>
-            </Radio.Group>
-          </Form.Item>
-        </div>
-        <Form.Item
-          label={<span style={{ fontWeight: 500 }}>Biografi</span>}
-          name="bio"
           style={{ marginBottom: 18 }}
         >
-          <Input.TextArea
-            rows={3}
-            placeholder=""
-            style={{ resize: "vertical" }}
-          />
+          <Input size="large" />
         </Form.Item>
         <Form.Item style={{ textAlign: "right", marginBottom: 0 }}>
           <Button
             type="primary"
             htmlType="submit"
             style={{
-              background: "#e53935",
+              background: "#27ae60",
               border: "none",
               borderRadius: 8,
               fontWeight: 600,
               fontSize: 16,
               padding: "0 32px",
               height: 40,
+              transition: "background 0.2s",
             }}
+            disabled={false}
           >
             Simpan
           </Button>
