@@ -6,7 +6,10 @@ import {
   MessageOutlined,
   PlusCircleFilled,
   SearchOutlined,
+  CloseOutlined,
+  PlusOutlined,
 } from "@ant-design/icons";
+import { Modal, Button, Form, Input, Drawer } from "antd";
 
 const postsData = [
   {
@@ -59,6 +62,8 @@ export default function Community() {
   );
   const [openMenuPostId, setOpenMenuPostId] = useState(null);
   const menuRef = useRef();
+  const [addDrawerOpen, setAddDrawerOpen] = useState(false);
+  const [addForm] = Form.useForm();
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -638,26 +643,161 @@ export default function Community() {
             <div style={{ position: "fixed", bottom: 32, right: 32 }}>
               <button
                 style={{
-                  background: "transparent",
+                  background: "#4CAF50",
                   border: "none",
+                  color: "#fff",
                   borderRadius: "50%",
                   width: 56,
                   height: 56,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
+                  fontSize: 32,
                   boxShadow: "0 2px 8px rgba(76,175,80,0.15)",
                   cursor: "pointer",
-                  fontSize: 36,
-                  color: "#4CAF50",
                   padding: 0,
+                  outline: "none",
                 }}
+                onClick={() => setAddDrawerOpen(true)}
               >
-                <PlusCircleFilled style={{ fontSize: 48, color: "#4CAF50" }} />
+                <PlusOutlined />
               </button>
             </div>
           </div>
         </div>
+        {/* Drawer Add Post */}
+        <Drawer
+          open={addDrawerOpen}
+          onClose={() => setAddDrawerOpen(false)}
+          width={480}
+          closable={false}
+          bodyStyle={{ paddingTop: 0, paddingBottom: 24 }}
+          headerStyle={{ display: "none" }}
+        >
+          {/* Custom Header */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              borderBottom: "1px solid #f0f0f0",
+              padding: "16px 0 16px 0",
+              marginBottom: 16,
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <Button
+                type="text"
+                icon={
+                  <CloseOutlined
+                    style={{
+                      fontSize: 18,
+                      color: "#888",
+                      transition: "color 0.18s",
+                    }}
+                  />
+                }
+                onClick={() => setAddDrawerOpen(false)}
+                style={{
+                  background: "none",
+                  border: "none",
+                  boxShadow: "none",
+                  outline: "none",
+                  padding: 0,
+                  width: 28,
+                  height: 28,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                }}
+                tabIndex={0}
+                onFocus={(e) => (e.target.style.boxShadow = "none")}
+                onMouseDown={(e) => (e.target.style.boxShadow = "none")}
+                onMouseEnter={(e) => {
+                  const icon = e.currentTarget.querySelector("svg");
+                  if (icon) icon.style.color = "#111";
+                }}
+                onMouseLeave={(e) => {
+                  const icon = e.currentTarget.querySelector("svg");
+                  if (icon) icon.style.color = "#888";
+                }}
+              />
+              <span style={{ fontWeight: 500, fontSize: 15 }}>
+                Add Community
+              </span>
+            </div>
+            <Button
+              type="primary"
+              htmlType="submit"
+              form="addPostForm"
+              style={{
+                minWidth: 90,
+                background: "#27ae60",
+                border: "none",
+                color: "#fff",
+                fontWeight: 600,
+                fontSize: 15,
+                borderRadius: 8,
+                boxShadow: "none",
+                transition: "background 0.2s",
+              }}
+              onMouseEnter={(e) => (e.target.style.background = "#219150")}
+              onMouseLeave={(e) => (e.target.style.background = "#27ae60")}
+            >
+              Submit
+            </Button>
+          </div>
+          <Form
+            id="addPostForm"
+            form={addForm}
+            layout="vertical"
+            onFinish={() => setAddDrawerOpen(false)}
+            style={{ fontFamily: "Poppins, sans-serif" }}
+          >
+            <Form.Item
+              label={
+                <span
+                  style={{
+                    color: "#111",
+                    fontWeight: 500,
+                    fontFamily: "Poppins, sans-serif",
+                  }}
+                >
+                  Content
+                </span>
+              }
+              name="content"
+              rules={[{ required: true, message: "Content wajib diisi" }]}
+            >
+              <Input.TextArea
+                rows={4}
+                placeholder="Tulis konten dan deskripsi di sini..."
+                style={{ fontFamily: "Poppins, sans-serif" }}
+              />
+            </Form.Item>
+            <Form.Item
+              label={
+                <span
+                  style={{
+                    color: "#111",
+                    fontWeight: 500,
+                    fontFamily: "Poppins, sans-serif",
+                  }}
+                >
+                  Image URL
+                </span>
+              }
+              name="imageUrl"
+              style={{ maxWidth: 220 }}
+            >
+              <Input
+                placeholder="https://..."
+                style={{ width: 430, fontFamily: "Poppins, sans-serif" }}
+              />
+            </Form.Item>
+          </Form>
+        </Drawer>
       </div>
     </div>
   );
