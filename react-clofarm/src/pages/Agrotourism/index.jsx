@@ -91,15 +91,14 @@ const initialDummyReviews = [
 const styles = {
   // Layout Utama
   pageWrapper: {
-    background: "#f9fafb",
+    background: "#f8f9fa",
     minHeight: "100vh",
-    padding: "32px",
   },
   container: {
-    padding: "32px 40px",
-    borderRadius: "18px",
+    padding: "25px 30px",
+    borderRadius: "14px",
     margin: "0 auto",
-    maxWidth: "1400px",
+    maxWidth: "1550px",
     boxSizing: "border-box",
     background: "#fff",
     boxShadow: "0 4px 24px 0 rgba(0,0,0,0.08)",
@@ -122,7 +121,7 @@ const styles = {
     height: "48px",
     boxShadow: "none",
     transition: "border-color 0.2s, box-shadow 0.2s",
-    maxWidth: 1000,
+    maxWidth: 1285,
     width: "100%",
   },
   searchWrapperHover: {
@@ -176,12 +175,12 @@ const styles = {
   },
   cardTitle: {
     margin: "0 0 8px 0",
-    fontSize: "16px",
+    fontSize: "19px",
     fontWeight: 600,
     color: "#111827",
   },
   cardInfo: {
-    fontSize: "14px",
+    fontSize: "16px",
     color: "#6b7280",
     marginBottom: 4,
     display: "flex",
@@ -191,6 +190,7 @@ const styles = {
   cardPrice: {
     color: "#059669",
     fontWeight: 600,
+    fontSize: "17px",
   },
 };
 
@@ -245,13 +245,13 @@ function StarRating({ value, onChange }) {
 const MainCard = ({ children }) => (
   <div
     style={{
-      padding: "25px 30px",
-      borderRadius: "14px",
-      margin: "0 auto 30px auto",
-      maxWidth: "1200px",
-      boxSizing: "border-box",
       background: "#fff",
+      borderRadius: "14px",
+      padding: "25px 30px",
       boxShadow: "0 4px 24px 0 rgba(0,0,0,0.08)",
+      maxWidth: "1550px",
+      margin: "0 auto 30px auto",
+      boxSizing: "border-box",
     }}
   >
     {children}

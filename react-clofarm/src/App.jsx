@@ -11,6 +11,7 @@ import Agrotourism from "./pages/Agrotourism";
 import Community from "./pages/Community";
 import Mentorship from "./pages/Mentorship";
 import MentorshipDetail from "./pages/Mentorship/mentorshipdetail";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/community" element={<Community />} />
         <Route path="/mentorship" element={<Mentorship />} />
         <Route path="/mentorship/:id" element={<MentorshipDetail />} />
+        <Route path="/profile-settings" element={<Profile />} />
         {/* Tambahkan fitur lain di sini */}
       </Route>
     </Routes>

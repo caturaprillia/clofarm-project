@@ -52,7 +52,7 @@ export default function Mentorship() {
           borderRadius: 14,
           boxShadow: "0 4px 24px 0 rgba(0,0,0,0.08)",
           padding: "25px 30px",
-          maxWidth: 1200,
+          maxWidth: 1550,
           margin: "0 auto 30px auto",
           boxSizing: "border-box",
         }}
@@ -77,7 +77,7 @@ export default function Mentorship() {
             padding: "0 16px",
             height: "48px",
             margin: "0 0 32px 0",
-            maxWidth: 995,
+            maxWidth: 1275,
             width: "100%",
             boxShadow: searchHover ? "0 0 0 2px #bfe4ce" : "none",
             transition: "border-color 0.2s, box-shadow 0.2s",
@@ -180,7 +180,7 @@ export default function Mentorship() {
                     <div
                       style={{
                         fontWeight: 600,
-                        fontSize: "16px",
+                        fontSize: "19px",
                         marginBottom: "8px",
                         color: "#111827",
                         fontFamily: "Poppins, sans-serif",
@@ -192,7 +192,7 @@ export default function Mentorship() {
                       <div
                         style={{
                           color: "#6b7280",
-                          fontSize: "14px",
+                          fontSize: "16px",
                           marginBottom: "18px",
                           fontFamily: "Poppins, sans-serif",
                           lineHeight: 1.5,
@@ -204,7 +204,7 @@ export default function Mentorship() {
                       <div
                         style={{
                           color: "#6b7280",
-                          fontSize: "14px",
+                          fontSize: "16px",
                           marginBottom: "18px",
                           fontFamily: "Poppins, sans-serif",
                           lineHeight: 1.5,
@@ -235,7 +235,7 @@ export default function Mentorship() {
                       borderRadius: 8,
                       padding: "10px 0",
                       fontWeight: 600,
-                      fontSize: "15px",
+                      fontSize: "16.5px",
                       cursor: "pointer",
                       width: "100%",
                       fontFamily: "Poppins, sans-serif",

@@ -1,5 +1,5 @@
 import React from "react";
-import { LogoutOutlined, SettingOutlined } from "@ant-design/icons";
+import ProfileDropdown from "./ProfileDropdown";
 
 const styles = {
   pageHeader: {
@@ -7,9 +7,9 @@ const styles = {
     top: 0,
     left: 280,
     right: 0,
-    height: 35,
     zIndex: 101,
     width: "calc(100% - 280px)",
+    height: 35,
     padding: "15px 40px",
     background: "white",
     borderBottom: "0.2px solid #e5e7eb",
@@ -32,22 +32,36 @@ const styles = {
     color: "#374151",
     cursor: "pointer",
   },
-  settingsIcon: { fontSize: 22, color: "#6b7280", cursor: "pointer" },
+  headerRight: {
+    display: "flex",
+    alignItems: "center",
+    gap: "16px",
+    marginRight: "105px",
+  },
+  headerLeft: {
+    flex: 2,
+  },
 };
 
 const Header = () => {
-  const doLogout = () => {
-    alert("Tombol Sign Out diklik!");
+  // Sample user data - replace with actual user data from your auth system
+  const user = {
+    name: "Eka",
+    avatar:
+      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
+    points: 2055,
+    certificates: 0,
+    profileProgress: 54,
   };
+
   return (
     <header style={styles.pageHeader}>
-      {/* <span style={{ fontWeight: 700, fontSize: "22px" }}>Clofarm</span> */}
-      {/* <div style={{ display: 'flex', alignItems: 'center', gap: '25px' }}>
-        <button onClick={doLogout} style={styles.headerButton}>
-          <LogoutOutlined /> Sign Out
-        </button>
-        <SettingOutlined style={styles.settingsIcon} />
-      </div> */}
+      {/* Left side - empty space */}
+      <div style={styles.headerLeft}></div>
+      {/* Right side - ProfileDropdown only */}
+      <div style={styles.headerRight}>
+        <ProfileDropdown user={user} />
+      </div>
     </header>
   );
 };

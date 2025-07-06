@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
 :root {
   font-family: "Poppins", Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -20,6 +22,13 @@
   --ant-link-color: #32a960;
   --ant-link-hover-color: #288347;
   --ant-link-active-color: #288347;
+}
+
+html,
+body,
+#root,
+* {
+  font-family: "Poppins", Inter, system-ui, Avenir, Helvetica, Arial, sans-serif !important;
 }
 
 a {
@@ -133,4 +142,50 @@ button:focus-visible {
 :where(.css-dev-only-do-not-override-1adbn6x).ant-btn-link:hover,
 :where(.css-dev-only-do-not-override-1adbn6x).ant-typography a:hover {
   color: #288347;
+}
+
+/* HOVER & FOCUS EFFECTS FOR INPUTS (like Article) */
+input,
+textarea,
+select,
+.ant-input,
+.ant-select-selector,
+.ant-picker,
+.ant-radio-group {
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-size: 16px;
+  min-height: 48px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+input:hover,
+textarea:hover,
+select:hover,
+.ant-input:hover,
+.ant-select-selector:hover,
+.ant-picker:hover,
+.ant-radio-group:hover {
+  border-color: #32a960 !important;
+  box-shadow: 0 0 0 2px #bfe4ce !important;
+}
+input:focus,
+textarea:focus,
+select:focus,
+.ant-input:focus,
+.ant-select-selector:focus,
+.ant-picker-focused,
+.ant-radio-group:focus {
+  border-color: #32a960 !important;
+  box-shadow: 0 0 0 2px #bfe4ce !important;
+}
+
+/* Tinggi kolom input lebih besar */
+.ant-input,
+.ant-select-selector,
+.ant-picker,
+.ant-radio-group {
+  min-height: 48px !important;
+  font-size: 16px;
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
 }

@@ -77,7 +77,7 @@ const ArticleCard = ({ image, title, description, url }) => (
       <h3
         style={{
           margin: "12px 0 4px 0",
-          fontSize: "0.9rem",
+          fontSize: "1.08rem",
           fontWeight: 700,
           color: "#222",
         }}
@@ -85,7 +85,7 @@ const ArticleCard = ({ image, title, description, url }) => (
         {" "}
         {title}{" "}
       </h3>{" "}
-      <div style={{ fontSize: "0.75rem", color: "#888", marginBottom: "8px" }}>
+      <div style={{ fontSize: "0.92rem", color: "#888", marginBottom: "8px" }}>
         {" "}
         {description}{" "}
       </div>{" "}
@@ -107,7 +107,7 @@ const ArticleCard = ({ image, title, description, url }) => (
           fontWeight: "bold",
           textAlign: "center",
           textDecoration: "none",
-          fontSize: "0.95rem",
+          fontSize: "1.05rem",
           transition: "background 0.2s, color 0.2s",
         }}
         onMouseEnter={(e) => {
@@ -130,22 +130,20 @@ const Article = () => {
   return (
     <div
       style={{
-        padding: "0px 2px 0 2px",
-        background: "#f9fafb",
+        background: "#f8f9fa",
         minHeight: "100vh",
         overflowY: "auto",
       }}
     >
-      {" "}
       <div
         style={{
-          padding: "25px 30px",
-          borderRadius: "14px",
-          margin: "0 auto 30px auto",
-          maxWidth: "1550px",
-          boxSizing: "border-box",
           background: "#fff",
+          borderRadius: "14px",
+          padding: "25px 30px",
           boxShadow: "0 4px 24px 0 rgba(0,0,0,0.08)",
+          maxWidth: "1550px",
+          margin: "0 auto 30px auto",
+          boxSizing: "border-box",
         }}
       >
         {" "}
@@ -172,7 +170,7 @@ const Article = () => {
             marginBottom: "30px",
             boxShadow: searchHover ? "0 0 0 2px #bfe4ce" : "none",
             transition: "border-color 0.2s, box-shadow 0.2s",
-            maxWidth: 985,
+            maxWidth: 1270,
             width: "100%",
           }}
           onMouseEnter={() => setSearchHover(true)}
