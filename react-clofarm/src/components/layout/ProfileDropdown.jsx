@@ -5,10 +5,13 @@ import {
   SettingOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
+import { useUser } from '../UserContext';
 
 const { Text } = Typography;
 
-const ProfileDropdown = ({ user }) => {
+const ProfileDropdown = () => {
+  const { user } = useUser();
+
   const menu = (
     <Menu style={{ width: 240, padding: 0, borderRadius: 12 }}>
       <Menu.Item
@@ -22,7 +25,7 @@ const ProfileDropdown = ({ user }) => {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <Avatar size={48} src={user?.avatar} icon={<UserOutlined />} />
+          <Avatar size={48} src={user?.photo_url} icon={<UserOutlined />} />
           <div style={{ flex: 1 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <Text strong style={{ fontSize: 16 }}>
@@ -30,7 +33,7 @@ const ProfileDropdown = ({ user }) => {
               </Text>
             </div>
             <div style={{ fontSize: 13, color: "#888" }}>
-              {user?.email || "user@email.com"}
+              @{user?.username || "-"}
             </div>
           </div>
         </div>
@@ -42,7 +45,7 @@ const ProfileDropdown = ({ user }) => {
         style={{ fontWeight: 500, fontSize: 15, padding: "12px 24px" }}
       >
         <a
-          href="/profile-settings"
+          href="/profile"
           style={{ color: "#222", transition: "color 0.2s" }}
           onMouseEnter={(e) => (e.currentTarget.style.color = "#32a960")}
           onMouseLeave={(e) => (e.currentTarget.style.color = "#222")}
@@ -51,22 +54,17 @@ const ProfileDropdown = ({ user }) => {
         </a>
       </Menu.Item>
       <Divider style={{ margin: 0 }} />
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 12,
-          padding: "12px 24px",
-          color: "#dc2626",
-          fontWeight: 500,
-          fontSize: 15,
-          cursor: "default",
-          userSelect: "none",
+      <Menu.Item
+        key="signout"
+        icon={<LogoutOutlined style={{ color: "#dc2626", fontSize: 18 }} />}
+        style={{ color: "#dc2626", fontWeight: 500, fontSize: 15, padding: "12px 24px" }}
+        onClick={() => {
+          localStorage.removeItem('token');
+          window.location.href = '/';
         }}
       >
-        <LogoutOutlined style={{ color: "#dc2626", fontSize: 18 }} />
         Sign Out
-      </div>
+      </Menu.Item>
     </Menu>
   );
 
@@ -83,7 +81,7 @@ const ProfileDropdown = ({ user }) => {
           transition: "background-color 0.2s ease",
         }}
       >
-        <Avatar size={32} src={user?.avatar} icon={<UserOutlined />} />
+        <Avatar size={32} src={user?.photo_url} icon={<UserOutlined />} />
         <span style={{ fontSize: 14, fontWeight: 500, color: "#333" }}>
           {user?.name || "User"}
         </span>

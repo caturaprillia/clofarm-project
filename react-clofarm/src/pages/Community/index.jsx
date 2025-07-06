@@ -8,62 +8,138 @@ import {
   SearchOutlined,
   CloseOutlined,
   PlusOutlined,
+  MoreOutlined,
 } from "@ant-design/icons";
-import { Modal, Button, Form, Input, Drawer } from "antd";
+import { Modal, Button, Form, Input, Drawer, message, Dropdown, Menu, Popconfirm, notification } from "antd";
+import { useUser } from '../../components/UserContext';
 
-const postsData = [
-  {
-    id: 1,
-    user: { name: "nama", username: "username", avatar: "", date: "tanggal" },
-    content: "Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet",
-    image: "",
-    likes: 0,
-    comments: 0,
-    initialComments: [],
-  },
-  {
-    id: 2,
-    user: { name: "nama", username: "username", avatar: "", date: "tanggal" },
-    content: "Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet",
-    image: "",
-    likes: 2,
-    comments: 0,
-    initialComments: [],
-  },
-];
+// Helper untuk fetch user profile by id
+async function fetchUserProfile(id_user) {
+  const token = localStorage.getItem('token');
+  const res = await fetch(`http://localhost:5000/auth/profile?id_user=${id_user}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  if (!res.ok) return null;
+  return await res.json();
+}
 
-const users = [
-  { id: 1, name: "nama", username: "username", avatar: "" },
-  { id: 2, name: "nama", username: "username", avatar: "" },
-  { id: 3, name: "nama", username: "username", avatar: "" },
-];
+// Helper to fetch likes for a post
+async function fetchLikes(postId) {
+  const token = localStorage.getItem('token');
+  const res = await fetch(`http://localhost:5000/community_likes/post/${postId}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  if (!res.ok) return [];
+  return await res.json();
+}
 
-const currentUsername = "nana"; // Ganti dengan username user login
+// Helper to fetch comments for a post
+async function fetchComments(postId) {
+  const token = localStorage.getItem('token');
+  const res = await fetch(`http://localhost:5000/community_comments/post/${postId}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  if (!res.ok) return [];
+  return await res.json();
+}
 
 export default function Community() {
+  const { user, loading: userLoading } = useUser();
   // State untuk like per post dan jumlah like
   const [liked, setLiked] = useState({});
-  const [likesCount, setLikesCount] = useState(
-    postsData.reduce((acc, post) => ({ ...acc, [post.id]: post.likes }), {})
-  );
-  const [commentsCount, setCommentsCount] = useState(
-    postsData.reduce((acc, post) => ({ ...acc, [post.id]: post.comments }), {})
-  );
+  const [likesCount, setLikesCount] = useState({});
+  const [commentsCount, setCommentsCount] = useState({});
   const [showCommentForm, setShowCommentForm] = useState({});
   const [commentInput, setCommentInput] = useState({});
-  const [comments, setComments] = useState(
-    postsData.reduce(
-      (acc, post) => ({
-        ...acc,
-        [post.id]: post.initialComments || [],
-      }),
-      {}
-    )
-  );
+  const [comments, setComments] = useState({});
   const [openMenuPostId, setOpenMenuPostId] = useState(null);
   const menuRef = useRef();
   const [addDrawerOpen, setAddDrawerOpen] = useState(false);
   const [addForm] = Form.useForm();
+  // State untuk loading submit
+  const [submitting, setSubmitting] = useState(false);
+  const [posts, setPosts] = useState([]);
+  const [userProfiles, setUserProfiles] = useState({});
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editForm] = Form.useForm();
+  const [editingPost, setEditingPost] = useState(null);
+
+  const fetchPosts = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch('http://localhost:5000/community_posts', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error('Failed to fetch posts');
+      const data = await res.json();
+      // Sort by created_at descending (newest first)
+      const sorted = [...data].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      setPosts(sorted);
+      // Fetch likes and comments count for each post
+      const likesObj = {};
+      const likedObj = {};
+      const commentsObj = {};
+      const commentsCountObj = {};
+      for (const post of sorted) {
+        const likes = await fetchLikes(post.id_community_posts);
+        likesObj[post.id_community_posts] = likes.length;
+        likedObj[post.id_community_posts] = likes.some(l => l.id_user === user?.id_user);
+        const comms = await fetchComments(post.id_community_posts);
+        commentsObj[post.id_community_posts] = comms;
+        commentsCountObj[post.id_community_posts] = comms.length;
+      }
+      setLikesCount(likesObj);
+      setLiked(likedObj);
+      setComments(commentsObj);
+      setCommentsCount(commentsCountObj);
+    } catch (err) {
+      setPosts([]);
+    }
+  };
+
+  useEffect(() => {
+    if (user) fetchPosts();
+  }, [user]);
+
+  // Fetch user profiles for posts
+  useEffect(() => {
+    async function fetchProfiles() {
+      const ids = Array.from(new Set(posts.map(p => p.id_user).filter(Boolean)));
+      const profiles = {};
+      for (const id of ids) {
+        if (!userProfiles[id]) {
+          const profile = await fetchUserProfile(id);
+          if (profile) profiles[id] = profile;
+        }
+      }
+      setUserProfiles(prev => ({ ...prev, ...profiles }));
+    }
+    if (posts.length) fetchProfiles();
+    // eslint-disable-next-line
+  }, [posts]);
+
+  useEffect(() => {
+    async function fetchProfilesFromComments() {
+      const ids = [];
+      Object.values(comments).forEach(commentArr => {
+        commentArr.forEach(k => {
+          if (k.id_user && !userProfiles[k.id_user]) ids.push(k.id_user);
+        });
+      });
+      const profiles = {};
+      for (const id of ids) {
+        if (!userProfiles[id]) {
+          const profile = await fetchUserProfile(id);
+          if (profile) profiles[id] = profile;
+        }
+      }
+      if (Object.keys(profiles).length > 0) {
+        setUserProfiles(prev => ({ ...prev, ...profiles }));
+      }
+    }
+    fetchProfilesFromComments();
+    // eslint-disable-next-line
+  }, [comments]);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -79,15 +155,42 @@ export default function Community() {
     };
   }, [openMenuPostId]);
 
-  const handleLike = (postId) => {
-    setLiked((prev) => ({
-      ...prev,
-      [postId]: !prev[postId],
-    }));
-    setLikesCount((prev) => ({
-      ...prev,
-      [postId]: prev[postId] + (liked[postId] ? -1 : 1),
-    }));
+  // Like/unlike post
+  const handleLike = async (postId) => {
+    const token = localStorage.getItem('token');
+    try {
+      if (!liked[postId]) {
+        // Like
+        const formData = new FormData();
+        formData.append('id_community_posts', postId);
+        const res = await fetch('http://localhost:5000/community_likes', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData
+        });
+        if (res.ok) {
+          // Refresh likes
+          const likes = await fetchLikes(postId);
+          setLikesCount(prev => ({ ...prev, [postId]: likes.length }));
+          setLiked(prev => ({ ...prev, [postId]: true }));
+        }
+      } else {
+        // Unlike
+        const formData = new FormData();
+        formData.append('id_community_posts', postId);
+        const res = await fetch('http://localhost:5000/community_likes', {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData
+        });
+        if (res.ok) {
+          // Refresh likes
+          const likes = await fetchLikes(postId);
+          setLikesCount(prev => ({ ...prev, [postId]: likes.length }));
+          setLiked(prev => ({ ...prev, [postId]: false }));
+        }
+      }
+    } catch (err) {}
   };
 
   const handleCommentIconClick = (postId) => {
@@ -104,24 +207,117 @@ export default function Community() {
     }));
   };
 
-  const handleCommentSubmit = (postId) => {
+  // Submit comment
+  const handleCommentSubmit = async (postId) => {
     if (!commentInput[postId] || commentInput[postId].trim() === "") return;
-    setCommentsCount((prev) => ({
-      ...prev,
-      [postId]: prev[postId] + 1,
-    }));
-    setComments((prev) => ({
-      ...prev,
-      [postId]: [
-        ...prev[postId],
-        { username: currentUsername, text: commentInput[postId] },
-      ],
-    }));
-    setCommentInput((prev) => ({
-      ...prev,
-      [postId]: "",
-    }));
+    const token = localStorage.getItem('token');
+    const formData = new FormData();
+    formData.append('id_community_posts', postId);
+    formData.append('comment', commentInput[postId]);
+    try {
+      const res = await fetch('http://localhost:5000/community_comments', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData
+      });
+      if (res.ok) {
+        // Refresh comments
+        const comms = await fetchComments(postId);
+        setComments(prev => ({ ...prev, [postId]: comms }));
+        setCommentsCount(prev => ({ ...prev, [postId]: comms.length }));
+        setCommentInput(prev => ({ ...prev, [postId]: "" }));
+      }
+    } catch (err) {}
   };
+
+  // Handler submit form tambah post
+  const handleAddPost = async (values) => {
+    setSubmitting(true);
+    try {
+      const token = localStorage.getItem('token');
+      const formData = new FormData();
+      formData.append('content', values.content);
+      formData.append('images_url', values.imageUrl || '');
+      const res = await fetch('http://localhost:5000/community_posts', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        body: formData
+      });
+      if (res.ok) {
+        setAddDrawerOpen(false);
+        addForm.resetFields();
+        notification.success({ message: 'Post successfully added!' });
+        fetchPosts();
+      } else {
+        const data = await res.json();
+        notification.error({ message: data.msg || 'Failed to post community' });
+      }
+    } catch (err) {
+      notification.error({ message: 'Failed to post community' });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDeletePost = async (postId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`http://localhost:5000/community_posts/${postId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        notification.success({ message: 'Post deleted successfully!' });
+        fetchPosts();
+      } else {
+        notification.error({ message: 'Failed to delete post' });
+      }
+    } catch (err) {
+      notification.error({ message: 'Failed to delete post' });
+    }
+  };
+
+  const handleEditPost = (post) => {
+    setEditingPost(post);
+    editForm.setFieldsValue({
+      content: post.content,
+      imageUrl: post.images_url || '',
+    });
+    setEditModalOpen(true);
+  };
+
+  const handleEditPostSubmit = async () => {
+    try {
+      const values = await editForm.validateFields();
+      const token = localStorage.getItem('token');
+      const formData = new FormData();
+      formData.append('content', values.content);
+      formData.append('images_url', values.imageUrl || '');
+      const res = await fetch(`http://localhost:5000/community_posts/${editingPost.id_community_posts}`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData
+      });
+      if (res.ok) {
+        notification.success({ message: 'Post updated successfully!' });
+        setEditModalOpen(false);
+        setEditingPost(null);
+        fetchPosts();
+      } else {
+        notification.error({ message: 'Failed to update post' });
+      }
+    } catch (err) {
+      notification.error({ message: 'Failed to update post' });
+    }
+  };
+
+  const handleDeleteComment = async (commentId, postId) => {
+    // Panggil endpoint DELETE comment, lalu refresh comments untuk postId
+  };
+
+  if (userLoading) return <div style={{textAlign:'center',marginTop:40}}>Loading user...</div>;
 
   return (
     <div
@@ -160,357 +356,320 @@ export default function Community() {
             >
               Community
             </h1>
-            {postsData.map((post, index) => (
-              <div
-                key={post.id}
-                style={{
-                  background: "#fff",
-                  border: "1.5px solid #e5e7eb",
-                  borderRadius: "16px",
-                  marginBottom: "1.5rem",
-                  padding: "1.5rem",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-                  marginTop: index === 0 ? "26px" : undefined,
-                }}
-              >
-                {/* Header post */}
+            {posts.map((post, index) => {
+              const profile = userProfiles[post.id_user] || {};
+              console.log('user.id_user:', user?.id_user, 'post.id_user:', post.id_user, typeof user?.id_user, typeof post.id_user);
+              return (
                 <div
+                  key={post.id_community_posts || post.id}
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginBottom: "0.7rem",
-                    background: "none",
-                    boxShadow: "none",
+                    background: "#fff",
+                    border: "1.5px solid #e5e7eb",
+                    borderRadius: "16px",
+                    marginBottom: "1.5rem",
+                    padding: "1.5rem",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                    marginTop: index === 0 ? "26px" : undefined,
+                    position: 'relative'
                   }}
                 >
+                  {/* Header ala Twitter */}
                   <div
                     style={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: "50%",
-                      background: "#e0e0e0",
-                      marginRight: 12,
-                    }}
-                  />
-                  <div
-                    style={{ flex: 1, background: "none", boxShadow: "none" }}
-                  >
-                    <div
-                      style={{
-                        fontWeight: "bold",
-                        fontSize: 15,
-                        background: "none",
-                        boxShadow: "none",
-                      }}
-                    >
-                      {post.user.name}
-                    </div>
-                    <div
-                      style={{
-                        fontSize: 13,
-                        color: "#888",
-                        background: "none",
-                        boxShadow: "none",
-                      }}
-                    >
-                      {post.user.username}
-                    </div>
-                  </div>
-                  <div
-                    style={{
-                      color: "#888",
-                      fontSize: 13,
-                      marginRight: 12,
+                      display: "flex",
+                      alignItems: "center",
+                      marginBottom: "0.7rem",
                       background: "none",
                       boxShadow: "none",
                     }}
                   >
-                    {post.user.date}
-                  </div>
-                  <div
-                    style={{
-                      position: "relative",
-                      background: "none",
-                      boxShadow: "none",
-                    }}
-                  >
-                    <div
+                    <img
+                      src={profile.photo_url || "https://api.dicebear.com/7.x/adventurer-neutral/svg?seed=User"}
+                      alt={profile.name || "User"}
                       style={{
-                        fontSize: 20,
-                        color: "#aaa",
-                        cursor: "pointer",
-                        background: "none",
-                        boxShadow: "none",
+                        width: 40,
+                        height: 40,
+                        borderRadius: "50%",
+                        background: "#e0e0e0",
+                        marginRight: 12,
+                        objectFit: "cover"
                       }}
-                      onClick={() =>
-                        setOpenMenuPostId(
-                          post.id === openMenuPostId ? null : post.id
-                        )
-                      }
-                    >
-                      ⋮
-                    </div>
-                    {openMenuPostId === post.id && (
-                      <div
-                        ref={menuRef}
-                        style={{
-                          position: "absolute",
-                          top: 24,
-                          right: 0,
-                          background: "#fff",
-                          border: "1px solid #e5e7eb",
-                          borderRadius: 8,
-                          boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                          zIndex: 10,
-                          minWidth: 120,
-                        }}
-                      >
-                        <button
-                          style={{
-                            width: "100%",
-                            padding: "0.7rem 1rem",
-                            border: "none",
-                            background: "none",
-                            textAlign: "left",
-                            cursor: "pointer",
-                            transition: "background 0.2s",
-                          }}
-                          onMouseEnter={(e) => {
-                            e.target.style.background = "#f0f0f0";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.target.style.background = "transparent";
-                          }}
-                          onClick={() => {
-                            // TODO: handle edit
-                            setOpenMenuPostId(null);
-                            alert("Edit post " + post.id);
-                          }}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          style={{
-                            width: "100%",
-                            padding: "0.7rem 1rem",
-                            border: "none",
-                            background: "none",
-                            textAlign: "left",
-                            color: "#e74c3c",
-                            cursor: "pointer",
-                            transition: "background 0.2s",
-                          }}
-                          onMouseEnter={(e) => {
-                            e.target.style.background = "#f8d7da";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.target.style.background = "transparent";
-                          }}
-                          onClick={() => {
-                            // TODO: handle delete
-                            setOpenMenuPostId(null);
-                            alert("Hapus post " + post.id);
-                          }}
-                        >
-                          Hapus
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                {/* Konten post */}
-                <div style={{ marginBottom: "1rem", color: "#222" }}>
-                  {post.content}
-                </div>
-                <div
-                  style={{
-                    width: "100%",
-                    height: 120,
-                    background: "#d3d3d3",
-                    borderRadius: 8,
-                    marginBottom: "1rem",
-                  }}
-                />
-                {/* Icon komentar & like */}
-                <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                  <span
-                    style={{ display: "flex", alignItems: "center", gap: 4 }}
-                  >
-                    <MessageOutlined
-                      style={{
-                        fontSize: 20,
-                        color: "#bbb",
-                        cursor: "pointer",
-                        transition: "color 0.2s",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.target.style.color = "#4CAF50";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.color = "#bbb";
-                      }}
-                      onClick={() => handleCommentIconClick(post.id)}
                     />
-                    {commentsCount[post.id] > 0 && (
-                      <span
-                        style={{ fontSize: 15, color: "#bbb", minWidth: 18 }}
-                      >
-                        {commentsCount[post.id]}
-                      </span>
-                    )}
-                  </span>
-                  <span
-                    style={{ display: "flex", alignItems: "center", gap: 4 }}
-                  >
-                    {liked[post.id] ? (
-                      <HeartFilled
-                        style={{
-                          fontSize: 20,
-                          color: "#e74c3c",
-                          cursor: "pointer",
-                        }}
-                        onClick={() => handleLike(post.id)}
-                      />
-                    ) : (
-                      <HeartOutlined
-                        style={{
-                          fontSize: 20,
-                          color: "#e74c3c",
-                          cursor: "pointer",
-                        }}
-                        onClick={() => handleLike(post.id)}
-                      />
-                    )}
-                    {likesCount[post.id] > 0 && (
-                      <span
-                        style={{ fontSize: 15, color: "#e74c3c", minWidth: 18 }}
-                      >
-                        {likesCount[post.id]}
-                      </span>
-                    )}
-                  </span>
-                </div>
-                {/* Form komentar */}
-                {showCommentForm[post.id] && (
-                  <div style={{ marginTop: "1rem" }}>
-                    {/* Daftar komentar */}
-                    {comments[post.id] && comments[post.id].length > 0 && (
-                      <div style={{ marginBottom: "0.7rem" }}>
-                        {comments[post.id].map((komentar, idx) => (
-                          <div
-                            key={idx}
-                            style={{
-                              background: "#f3f3f3",
-                              borderRadius: "8px",
-                              padding: "0.5rem 1rem",
-                              marginBottom: "0.4rem",
-                              fontSize: "0.98rem",
-                              color: "#333",
-                            }}
-                          >
-                            <div
-                              style={{
-                                fontWeight: "bold",
-                                color: "#4CAF50",
-                                marginBottom: 2,
-                              }}
-                            >
-                              {komentar.username}
-                            </div>
-                            <div>{komentar.text}</div>
-                          </div>
-                        ))}
+                    <div style={{ flex: 1, background: "none", boxShadow: "none" }}>
+                      <div style={{ fontWeight: "bold", fontSize: 15, background: "none", boxShadow: "none" }}>
+                        {profile.name || `User #${post.id_user}`}
+                        <span style={{ color: '#888', fontWeight: 400, fontSize: 14, marginLeft: 8 }}>
+                          @{profile.username || post.id_user}
+                        </span>
+                      </div>
+                    </div>
+                    <div style={{ color: "#888", fontSize: 13, marginRight: 12, background: "none", boxShadow: "none" }}>
+                      {/* Tampilkan tanggal jika ada */}
+                    </div>
+                    {/* Titik tiga pojok kanan atas */}
+                    {String(user?.id_user) === String(post.id_user) && (
+                      <div style={{ position: 'absolute', right: 18, top: 18 }}>
+                        <Dropdown
+                          overlay={
+                            <Menu>
+                              <Menu.Item key="edit">
+                                <Popconfirm
+                                  title="Edit Post"
+                                  description="Are you sure you want to edit this post?"
+                                  onConfirm={() => handleEditPost(post)}
+                                  okText="Edit"
+                                  cancelText="Cancel"
+                                >
+                                  <span>Edit</span>
+                                </Popconfirm>
+                              </Menu.Item>
+                              <Menu.Item key="delete">
+                                <Popconfirm
+                                  title="Delete Post"
+                                  description="Are you sure you want to delete this post?"
+                                  onConfirm={() => handleDeletePost(post.id_community_posts)}
+                                  okText="Delete"
+                                  cancelText="Cancel"
+                                  okType="danger"
+                                >
+                                  <span style={{ color: "red" }}>Delete</span>
+                                </Popconfirm>
+                              </Menu.Item>
+                            </Menu>
+                          }
+                          trigger={["click"]}
+                          placement="bottomRight"
+                        >
+                          <MoreOutlined style={{ fontSize: 22, color: "#888", cursor: "pointer" }} />
+                        </Dropdown>
                       </div>
                     )}
-                    {/* Form komentar */}
-                    <div style={{ display: "flex", gap: 8 }}>
-                      <input
-                        type="text"
-                        placeholder="Tulis komentar..."
-                        value={commentInput[post.id] || ""}
-                        onChange={(e) =>
-                          handleCommentInputChange(post.id, e.target.value)
-                        }
-                        style={{
-                          flex: 1,
-                          padding: "0.5rem 1rem",
-                          borderRadius: "8px",
-                          border: "1px solid #e5e7eb",
-                          fontSize: "1rem",
-                          transition: "border-color 0.2s",
-                          outline: "none",
-                        }}
-                        onFocus={(e) => {
-                          e.target.style.borderColor = "#27ae60";
-                          e.target.style.outline = "none";
-                        }}
-                        onBlur={(e) => {
-                          e.target.style.borderColor = "#e5e7eb";
-                          e.target.style.outline = "none";
-                        }}
-                        onMouseEnter={(e) => {
-                          e.target.style.borderColor = "#27ae60";
-                        }}
-                        onMouseLeave={(e) => {
-                          if (document.activeElement !== e.target) {
-                            e.target.style.borderColor = "#e5e7eb";
-                          }
-                        }}
-                      />
-                      <button
-                        onClick={() => handleCommentSubmit(post.id)}
-                        disabled={
-                          !commentInput[post.id] ||
-                          commentInput[post.id].trim() === ""
-                        }
-                        style={{
-                          background:
-                            !commentInput[post.id] ||
-                            commentInput[post.id].trim() === ""
-                              ? "#bfe4ce"
-                              : "#27ae60",
-                          color: "#fff",
-                          border: "none",
-                          borderRadius: "8px",
-                          padding: "0.5rem 1.2rem",
-                          fontWeight: "bold",
-                          fontSize: "1rem",
-                          cursor:
-                            !commentInput[post.id] ||
-                            commentInput[post.id].trim() === ""
-                              ? "not-allowed"
-                              : "pointer",
-                          opacity:
-                            !commentInput[post.id] ||
-                            commentInput[post.id].trim() === ""
-                              ? 0.7
-                              : 1,
-                          transition: "background 0.2s, opacity 0.2s",
-                        }}
-                        onMouseEnter={(e) => {
-                          if (
-                            commentInput[post.id] &&
-                            commentInput[post.id].trim() !== ""
-                          ) {
-                            e.target.style.background = "#219150";
-                          }
-                        }}
-                        onMouseLeave={(e) => {
-                          if (
-                            commentInput[post.id] &&
-                            commentInput[post.id].trim() !== ""
-                          ) {
-                            e.target.style.background = "#27ae60";
-                          }
-                        }}
-                      >
-                        Kirim
-                      </button>
-                    </div>
                   </div>
-                )}
-              </div>
-            ))}
+                  <div style={{ marginBottom: "1rem", color: "#222", fontSize: 17 }}>
+                    {post.content}
+                  </div>
+                  {/* Gambar jika ada */}
+                  {post.images_url && (
+                    <div style={{ width: "100%", margin: "12px 0" }}>
+                      <img src={post.images_url} alt="post" style={{ width: "100%", borderRadius: 12, objectFit: "cover", maxHeight: 320 }} />
+                    </div>
+                  )}
+                  {/* Icon komentar & like */}
+                  <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                    <span
+                      style={{ display: "flex", alignItems: "center", gap: 4 }}
+                    >
+                      <MessageOutlined
+                        style={{
+                          fontSize: 20,
+                          color: "#bbb",
+                          cursor: "pointer",
+                          transition: "color 0.2s",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.color = "#4CAF50";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.color = "#bbb";
+                        }}
+                        onClick={() => handleCommentIconClick(post.id_community_posts)}
+                      />
+                      {commentsCount[post.id_community_posts] > 0 && (
+                        <span
+                          style={{ fontSize: 15, color: "#bbb", minWidth: 18 }}
+                        >
+                          {commentsCount[post.id_community_posts]}
+                        </span>
+                      )}
+                    </span>
+                    <span
+                      style={{ display: "flex", alignItems: "center", gap: 4 }}
+                    >
+                      {liked[post.id_community_posts] ? (
+                        <HeartFilled
+                          style={{
+                            fontSize: 20,
+                            color: "#27ae60",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => handleLike(post.id_community_posts)}
+                        />
+                      ) : (
+                        <HeartOutlined
+                          style={{
+                            fontSize: 20,
+                            color: "#bbb",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => handleLike(post.id_community_posts)}
+                        />
+                      )}
+                      {likesCount[post.id_community_posts] > 0 && (
+                        <span
+                          style={{
+                            fontSize: 15,
+                            color: liked[post.id_community_posts] ? "#bbb" : "#bbb",
+                            minWidth: 18,
+                          }}
+                        >
+                          {likesCount[post.id_community_posts]}
+                        </span>
+                      )}
+                    </span>
+                  </div>
+                  {/* Form komentar */}
+                  {showCommentForm[post.id_community_posts] && (
+                    <div style={{ marginTop: "1rem" }}>
+                      {/* Daftar komentar */}
+                      {comments[post.id_community_posts] && comments[post.id_community_posts].length > 0 && (
+                        <div style={{ marginBottom: "0.7rem" }}>
+                          {comments[post.id_community_posts].map((komentar, idx) => {
+                            const cProfile = userProfiles[komentar.id_user] || {};
+                            return (
+                              <div
+                                key={idx}
+                                style={{
+                                  background: "#f3f3f3",
+                                  borderRadius: "8px",
+                                  padding: "0.5rem 1rem",
+                                  marginBottom: "0.4rem",
+                                  fontSize: "0.98rem",
+                                  color: "#333",
+                                  display: 'flex', alignItems: 'center', gap: 10,
+                                  position: 'relative'
+                                }}
+                              >
+                                <img src={cProfile.photo_url || "https://api.dicebear.com/7.x/adventurer-neutral/svg?seed=User"} alt={cProfile.name || komentar.id_user} style={{width:28,height:28,borderRadius:'50%',objectFit:'cover',marginRight:6}} />
+                                <div>
+                                  <div style={{fontWeight:'bold',color:'#4CAF50',marginBottom:2}}>
+                                    {cProfile.name || cProfile.username || `User #${komentar.id_user}`}
+                                    <span style={{ color: '#888', fontWeight: 400, fontSize: 13, marginLeft: 6 }}>
+                                      @{cProfile.username || komentar.id_user}
+                                    </span>
+                                  </div>
+                                  <div>{komentar.comment}</div>
+                                </div>
+                                {user?.id_user === komentar.id_user && (
+                                  <div style={{ position: 'absolute', right: 12, top: 12 }}>
+                                    <Dropdown
+                                      overlay={
+                                        <Menu>
+                                          <Menu.Item key="delete">
+                                            <Popconfirm
+                                              title="Delete Comment"
+                                              description="Are you sure you want to delete this comment?"
+                                              onConfirm={() => handleDeleteComment(komentar.id_community_comments, post.id_community_posts)}
+                                              okText="Delete"
+                                              cancelText="Cancel"
+                                              okType="danger"
+                                            >
+                                              <span style={{ color: "red" }}>Delete</span>
+                                            </Popconfirm>
+                                          </Menu.Item>
+                                        </Menu>
+                                      }
+                                      trigger={["click"]}
+                                      placement="bottomRight"
+                                    >
+                                      <MoreOutlined style={{ fontSize: 18, color: "#888", cursor: "pointer" }} />
+                                    </Dropdown>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                      {/* Form komentar */}
+                      <div style={{ display: "flex", gap: 8 }}>
+                        <input
+                          type="text"
+                          placeholder="Tulis komentar..."
+                          value={commentInput[post.id_community_posts] || ""}
+                          onChange={(e) =>
+                            handleCommentInputChange(post.id_community_posts, e.target.value)
+                          }
+                          style={{
+                            flex: 1,
+                            padding: "0.5rem 1rem",
+                            borderRadius: "8px",
+                            border: "1px solid #e5e7eb",
+                            fontSize: "1rem",
+                            transition: "border-color 0.2s",
+                            outline: "none",
+                          }}
+                          onFocus={(e) => {
+                            e.target.style.borderColor = "#27ae60";
+                            e.target.style.outline = "none";
+                          }}
+                          onBlur={(e) => {
+                            e.target.style.borderColor = "#e5e7eb";
+                            e.target.style.outline = "none";
+                          }}
+                          onMouseEnter={(e) => {
+                            e.target.style.borderColor = "#27ae60";
+                          }}
+                          onMouseLeave={(e) => {
+                            if (document.activeElement !== e.target) {
+                              e.target.style.borderColor = "#e5e7eb";
+                            }
+                          }}
+                        />
+                        <button
+                          onClick={() => handleCommentSubmit(post.id_community_posts)}
+                          disabled={
+                            !commentInput[post.id_community_posts] ||
+                            commentInput[post.id_community_posts].trim() === ""
+                          }
+                          style={{
+                            background:
+                              !commentInput[post.id_community_posts] ||
+                              commentInput[post.id_community_posts].trim() === ""
+                                ? "#bfe4ce"
+                                : "#27ae60",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: "8px",
+                            padding: "0.5rem 1.2rem",
+                            fontWeight: "bold",
+                            fontSize: "1rem",
+                            cursor:
+                              !commentInput[post.id_community_posts] ||
+                              commentInput[post.id_community_posts].trim() === ""
+                                ? "not-allowed"
+                                : "pointer",
+                            opacity:
+                              !commentInput[post.id_community_posts] ||
+                              commentInput[post.id_community_posts].trim() === ""
+                                ? 0.7
+                                : 1,
+                            transition: "background 0.2s, opacity 0.2s",
+                          }}
+                          onMouseEnter={(e) => {
+                            if (
+                              commentInput[post.id_community_posts] &&
+                              commentInput[post.id_community_posts].trim() !== ""
+                            ) {
+                              e.target.style.background = "#219150";
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (
+                              commentInput[post.id_community_posts] &&
+                              commentInput[post.id_community_posts].trim() !== ""
+                            ) {
+                              e.target.style.background = "#27ae60";
+                            }
+                          }}
+                        >
+                          Kirim
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
           {/* Sidebar kanan */}
           <div style={{ flex: 2, minWidth: 280 }}>
@@ -600,45 +759,7 @@ export default function Community() {
                 style={{ width: "100%", maxWidth: 180, objectFit: "contain" }}
               />
             </div>
-            {/* Daftar user */}
-            <div
-              style={{
-                background: "#fff",
-                border: "1.5px solid #e5e7eb",
-                borderRadius: "12px",
-                padding: "1.5rem",
-                marginBottom: "1.5rem",
-              }}
-            >
-              {users.map((user) => (
-                <div
-                  key={user.id}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginBottom: 16,
-                  }}
-                >
-                  <div
-                    style={{
-                      width: 32,
-                      height: 32,
-                      borderRadius: "50%",
-                      background: "#e0e0e0",
-                      marginRight: 12,
-                    }}
-                  />
-                  <div>
-                    <div style={{ fontWeight: "bold", fontSize: 15 }}>
-                      {user.name}
-                    </div>
-                    <div style={{ fontSize: 13, color: "#888" }}>
-                      {user.username}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            {/* Daftar user dihapus karena variabel users sudah tidak ada */}
             {/* Floating button */}
             <div style={{ position: "fixed", bottom: 32, right: 32 }}>
               <button
@@ -742,6 +863,8 @@ export default function Community() {
                 boxShadow: "none",
                 transition: "background 0.2s",
               }}
+              loading={submitting}
+              disabled={submitting}
               onMouseEnter={(e) => (e.target.style.background = "#219150")}
               onMouseLeave={(e) => (e.target.style.background = "#27ae60")}
             >
@@ -752,7 +875,7 @@ export default function Community() {
             id="addPostForm"
             form={addForm}
             layout="vertical"
-            onFinish={() => setAddDrawerOpen(false)}
+            onFinish={handleAddPost}
             style={{ fontFamily: "Poppins, sans-serif" }}
           >
             <Form.Item
@@ -798,6 +921,32 @@ export default function Community() {
             </Form.Item>
           </Form>
         </Drawer>
+        {/* Modal Edit Post */}
+        <Modal
+          open={editModalOpen}
+          title="Edit Community Post"
+          onCancel={() => { setEditModalOpen(false); setEditingPost(null); }}
+          onOk={handleEditPostSubmit}
+          okText="Save"
+          cancelText="Cancel"
+          confirmLoading={submitting}
+        >
+          <Form form={editForm} layout="vertical">
+            <Form.Item
+              label={<span style={{ color: "#111", fontWeight: 500 }}>Content</span>}
+              name="content"
+              rules={[{ required: true, message: "Content is required" }]}
+            >
+              <Input.TextArea rows={4} placeholder="Edit your content..." />
+            </Form.Item>
+            <Form.Item
+              label={<span style={{ color: "#111", fontWeight: 500 }}>Image URL</span>}
+              name="imageUrl"
+            >
+              <Input placeholder="https://..." />
+            </Form.Item>
+          </Form>
+        </Modal>
       </div>
     </div>
   );

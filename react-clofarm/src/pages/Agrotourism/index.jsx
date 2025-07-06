@@ -9,60 +9,11 @@ import {
 } from "@ant-design/icons";
 import dumpict from "../../assets/images/dumpict.jpg";
 import { notification, Dropdown, Menu, Popconfirm } from "antd";
+import { useUser } from '../../components/UserContext';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
-// Data Dummy
-const dummyData = [
-  {
-    id: 1,
-    name: "Clofarm",
-    city: "Tabanan",
-    province: "Bali",
-    price: "Rp50.000",
-    image: dumpict,
-    description:
-      "Clofarm adalah destinasi agrowisata edukasi dan rekreasi keluarga di tengah alam pedesaan yang asri.",
-    rating: 4.8,
-    gmaps: "https://maps.google.com/?q=Desa+Beraban+Kediri",
-  },
-  {
-    id: 2,
-    name: "Jatiluwih Rice Terraces",
-    city: "Jatiluwih",
-    province: "Bali",
-    price: "Rp40.000",
-    image: dumpict,
-    description:
-      "Jatiluwih menawarkan pemandangan sawah terasering yang menakjubkan dan udara sejuk pegunungan.",
-    rating: 4.7,
-    gmaps: "https://maps.google.com/?q=Jatiluwih+Penebel",
-  },
-  {
-    id: 3,
-    name: "Tegalalang Farm",
-    city: "Gianyar",
-    province: "Bali",
-    price: "Rp25.000",
-    image: dumpict,
-    description:
-      "Tegalalang Farm cocok untuk wisata keluarga dan edukasi pertanian modern di Bali.",
-    rating: 4.6,
-    gmaps: "https://maps.google.com/?q=Tegalalang+Gianyar",
-  },
-  {
-    id: 4,
-    name: "Big Tree Farms Bamboo",
-    city: "Abiansemal",
-    province: "Bali",
-    price: "Rp75.000",
-    image: dumpict,
-    description:
-      "Wisata pertanian organik dengan arsitektur bambu terbesar di dunia.",
-    rating: 4.9,
-    gmaps: "https://maps.google.com/?q=Sibang+Kaja+Abiansemal",
-  },
-];
 
-// Dummy reviews sesuai struktur tabel
+
 const initialDummyReviews = [
   {
     id_agrowisata_reviews: 1,
@@ -195,7 +146,7 @@ const styles = {
 };
 
 // Komponen Card
-const AgrotourismCard = ({ image_url, name, city, province, ticket_price, maps_url }) => (
+const AgrotourismCard = ({ image_url, name, city, province, ticket_price, onSeeDetails }) => (
   <div style={styles.card}>
     <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
       <img
@@ -222,10 +173,8 @@ const AgrotourismCard = ({ image_url, name, city, province, ticket_price, maps_u
       </div>
     </div>
     <div style={{ padding: "0 12px 12px 12px" }}>
-      <a
-        href={maps_url}
-        target="_blank"
-        rel="noopener noreferrer"
+      <button
+        onClick={onSeeDetails}
         style={{
           width: "100%",
           display: "block",
@@ -239,6 +188,7 @@ const AgrotourismCard = ({ image_url, name, city, province, ticket_price, maps_u
           textDecoration: "none",
           fontSize: "1.05rem",
           transition: "background 0.2s, color 0.2s",
+          cursor: "pointer",
         }}
         onMouseEnter={e => {
           e.target.style.background = "#219150";
@@ -249,16 +199,11 @@ const AgrotourismCard = ({ image_url, name, city, province, ticket_price, maps_u
           e.target.style.color = "#fff";
         }}
       >
-        Lihat di Maps
-      </a>
+        See Details
+      </button>
     </div>
   </div>
 );
-
-const DUMMY_USER = {
-  username: "John Doe",
-  profilePic: "https://i.pravatar.cc/100",
-};
 
 function StarRating({ value, onChange }) {
   return (
@@ -303,19 +248,27 @@ const MainCard = ({ children }) => (
   </div>
 );
 
-const CURRENT_USER_ID = 999; // dummy user id
+// Helper untuk fetch user profile by id
+async function fetchUserProfile(id_user) {
+  const token = localStorage.getItem('token');
+  const res = await fetch(`http://localhost:5000/auth/profile?id_user=${id_user}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  if (!res.ok) return null;
+  return await res.json();
+}
 
 function ReviewCard({
-  username,
-  profilePic,
+  id_user,
   rating,
   comment,
   photo,
-  id_user,
   isOwn,
   onDelete,
   onEdit,
+  userProfiles
 }) {
+  const cProfile = userProfiles[id_user] || {};
   return (
     <div
       style={{
@@ -377,16 +330,21 @@ function ReviewCard({
           }}
         >
           <img
-            src={profilePic}
-            alt={username}
+            src={cProfile.photo_url || "https://api.dicebear.com/7.x/adventurer-neutral/svg?seed=User"}
+            alt={cProfile.name || cProfile.username || "User"}
             style={{
               width: 32,
               height: 32,
               borderRadius: "50%",
               background: "#eee",
+              objectFit: "cover"
             }}
           />
-          <span style={{ fontWeight: 500 }}>{username}</span>
+          <span style={{ fontWeight: 500 }}>{cProfile.name || `User #${id_user}`}
+            <span style={{ color: '#888', fontWeight: 400, fontSize: 13, marginLeft: 6 }}>
+              @{cProfile.username || id_user}
+            </span>
+          </span>
         </div>
         <div style={{ color: "#27ae60", fontSize: 18, marginBottom: 4 }}>
           {[1, 2, 3, 4, 5].map((i) => (
@@ -441,86 +399,196 @@ function ReviewCard({
 
 function AgrotourismDetail() {
   const { id } = useParams();
-  const data = dummyData.find((item) => String(item.id) === String(id));
+  const { user } = useUser();
+  const [data, setData] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState("");
   const [rating, setRating] = React.useState(0);
   const [review, setReview] = React.useState("");
   const [photoURL, setPhotoURL] = React.useState("");
-  const [reviews, setReviews] = React.useState(
-    initialDummyReviews.filter((r) => String(r.id_agrowisata) === String(id))
-  );
+  const [reviews, setReviews] = React.useState([]);
+  const [loadingReviews, setLoadingReviews] = React.useState(true);
   const [editReviewId, setEditReviewId] = React.useState(null);
+  const [userProfiles, setUserProfiles] = React.useState({});
 
-  if (!data)
+  // Fetch agrotourism detail
+  React.useEffect(() => {
+    const fetchDetail = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("Token not found. Please login again.");
+        const response = await fetch(`http://localhost:5000/agrotourism/${id}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        if (!response.ok) {
+          const errData = await response.json();
+          throw new Error(errData.msg || "Failed to fetch agrotourism detail");
+        }
+        const detail = await response.json();
+        setData(detail);
+      } catch (err) {
+        setError(err.message);
+        setData(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDetail();
+  }, [id]);
+
+  // Fetch reviews from backend
+  const fetchReviews = React.useCallback(async () => {
+    try {
+      setLoadingReviews(true);
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `http://localhost:5000/agrotourism_reviews/agrotourism/${id}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (!response.ok) throw new Error("Failed to fetch reviews");
+      const data = await response.json();
+      setReviews(data);
+    } catch (err) {
+      setReviews([]);
+    } finally {
+      setLoadingReviews(false);
+    }
+  }, [id]);
+
+  React.useEffect(() => {
+    fetchReviews();
+  }, [fetchReviews]);
+
+  // Fetch user profiles for reviews
+  React.useEffect(() => {
+    async function fetchProfiles() {
+      const ids = Array.from(new Set(reviews.map(r => r.id_user).filter(Boolean)));
+      const profiles = {};
+      for (const id of ids) {
+        if (!userProfiles[id]) {
+          const profile = await fetchUserProfile(id);
+          if (profile) profiles[id] = profile;
+        }
+      }
+      setUserProfiles(prev => ({ ...prev, ...profiles }));
+    }
+    if (reviews.length) fetchProfiles();
+    // eslint-disable-next-line
+  }, [reviews]);
+
+  if (loading) {
     return (
       <MainCard>
-        <div>Agrotourism not found.</div>
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "50vh", fontSize: 18, color: "#666" }}>
+          Loading agrotourism detail...
+        </div>
       </MainCard>
     );
+  }
+  if (error || !data) {
+    return (
+      <MainCard>
+        <div style={{ color: "#e74c3c", fontSize: 18 }}>{error || "Agrotourism not found."}</div>
+      </MainCard>
+    );
+  }
 
   const handleCancel = () => {
     setRating(0);
     setReview("");
     setPhotoURL("");
+    setEditReviewId(null);
   };
 
-  const handleDeleteReview = (id_agrowisata_reviews) => {
-    setReviews((prev) =>
-      prev.filter((r) => r.id_agrowisata_reviews !== id_agrowisata_reviews)
-    );
-    notification.success({ message: "Review deleted!" });
-    // Jika sedang edit review yang dihapus, reset form
-    if (editReviewId === id_agrowisata_reviews) {
-      setEditReviewId(null);
-      setRating(0);
-      setReview("");
-      setPhotoURL("");
-    }
-  };
-
-  const handleEditReview = (review) => {
-    setEditReviewId(review.id_agrowisata_reviews);
-    setRating(review.rating);
-    setReview(review.review_text);
-    setPhotoURL(review.url_images || "");
-  };
-
-  const handleSubmit = (e) => {
+  // Submit or edit review
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!rating || !review.trim() || !photoURL.trim()) {
       notification.error({ message: "Please complete all fields!" });
       return;
     }
-    if (editReviewId) {
-      // Update review
-      setReviews((prev) =>
-        prev.map((r) =>
-          r.id_agrowisata_reviews === editReviewId
-            ? { ...r, rating, review_text: review, url_images: photoURL }
-            : r
-        )
-      );
-      notification.success({ message: "Review updated successfully!" });
+    const token = localStorage.getItem("token");
+    const formData = new FormData();
+    formData.append("id_agrowisata", id);
+    formData.append("rating", rating);
+    formData.append("review_text", review);
+    formData.append("url_images", photoURL);
+    try {
+      let res;
+      if (editReviewId) {
+        // Edit review
+        res = await fetch(`http://localhost:5000/agrotourism_reviews/${editReviewId}`, {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
+        if (!res.ok) throw new Error("Failed to update review");
+        notification.success({ message: "Review updated successfully!" });
+      } else {
+        // Create review
+        res = await fetch(`http://localhost:5000/agrotourism_reviews`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
+        if (!res.ok) throw new Error("Failed to submit review");
+        notification.success({ message: "Review submitted successfully!" });
+      }
+      setRating(0);
+      setReview("");
+      setPhotoURL("");
       setEditReviewId(null);
-    } else {
-      // Tambahkan review baru ke array
-      setReviews((prev) => [
-        ...prev,
-        {
-          id_agrowisata_reviews: Date.now(),
-          id_agrowisata: Number(id),
-          id_user: CURRENT_USER_ID, // dummy user id
-          username: "John Doe", // dummy username
-          profilePic: "https://i.pravatar.cc/100",
-          rating,
-          review_text: review,
-          url_images: photoURL,
-        },
-      ]);
-      notification.success({ message: "Review submitted successfully!" });
+      fetchReviews();
+    } catch (err) {
+      notification.error({ message: err.message || "Failed to submit review" });
     }
-    setRating(0);
-    setReview("");
-    setPhotoURL("");
+  };
+
+  // Delete review
+  const handleDeleteReview = async (id_agrowisata_reviews) => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`http://localhost:5000/agrotourism_reviews/${id_agrowisata_reviews}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!res.ok) throw new Error("Failed to delete review");
+      notification.success({ message: "Review deleted!" });
+      if (editReviewId === id_agrowisata_reviews) {
+        setEditReviewId(null);
+        setRating(0);
+        setReview("");
+        setPhotoURL("");
+      }
+      fetchReviews();
+    } catch (err) {
+      notification.error({ message: err.message || "Failed to delete review" });
+    }
+  };
+
+  // Edit review (populate form)
+  const handleEditReview = (review) => {
+    setEditReviewId(review.id_agrowisata_reviews);
+    setRating(review.rating);
+    setReview(review.review_text);
+    setPhotoURL(review.url_images || "");
   };
 
   return (
@@ -537,7 +605,7 @@ function AgrotourismDetail() {
           <h2 style={{ fontSize: "1.5rem", fontWeight: 700, marginBottom: 10 }}>
             {data.name}
           </h2>
-          <div style={{ color: "#222", fontSize: 16, marginBottom: 18 }}>
+          <div style={{ color: "#222", fontSize: 16, marginBottom: 18, textAlign: "justify" }}>
             <div>{data.description}</div>
           </div>
           <div
@@ -560,7 +628,7 @@ function AgrotourismDetail() {
                 style={{ color: "#27ae60", fontSize: 20 }}
               />
               <span style={{ fontWeight: 500, fontSize: 18, color: "#222" }}>
-                {data.price}
+                {data.ticket_price}
               </span>
             </span>
           </div>
@@ -572,64 +640,61 @@ function AgrotourismDetail() {
               marginBottom: 8,
             }}
           >
-            <StarFilled style={{ color: "#27ae60", fontSize: 20 }} />
+            <EnvironmentOutlined style={{ color: "#27ae60", fontSize: 20 }} />
             <span style={{ fontWeight: 500, fontSize: 18, color: "#222" }}>
-              {data.rating}
+              {data.city}, {data.province}
             </span>
+          </div>
+          <div style={{ marginTop: 18 }}>
+            <a
+              href={data.maps_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                background: "#27ae60",
+                color: "#fff",
+                border: "none",
+                borderRadius: 8,
+                padding: "8px 32px",
+                fontWeight: 600,
+                fontSize: 16,
+                textDecoration: "none",
+                transition: "background 0.2s",
+                display: "inline-block",
+              }}
+              onMouseEnter={e => (e.target.style.background = "#219150")}
+              onMouseLeave={e => (e.target.style.background = "#27ae60")}
+            >
+              VISIT
+            </a>
           </div>
         </div>
         <div
           style={{
-            flex: 1,
-            minWidth: 320,
+            height: "100%",
+            maxHeight: "100%",
             display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
+            alignItems: "stretch",
+            justifyContent: "flex-start",
+            alignSelf: "flex-start",
+            minWidth: 320,
+            maxWidth: 500,
+            flex: 1,
+            marginTop: 48,
           }}
         >
           <img
-            src={data.image}
+            src={data.image_url || dumpict}
             alt={data.name}
             style={{
-              width: 370,
-              height: 200,
+              height: "100%",
+              width: "100%",
               objectFit: "cover",
               borderRadius: 16,
-              marginBottom: 10,
+              background: "#f0f0f0",
+              display: "block",
             }}
           />
-          <div
-            style={{
-              fontWeight: 600,
-              fontSize: 20,
-              letterSpacing: 1,
-              textAlign: "center",
-              marginTop: 8,
-            }}
-          >
-            {data.city}, {data.province}
-          </div>
-          <a
-            href={data.gmaps}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              marginTop: 10,
-              background: "#27ae60",
-              color: "#fff",
-              border: "none",
-              borderRadius: 8,
-              padding: "6px 22px",
-              fontWeight: 600,
-              fontSize: 15,
-              cursor: "pointer",
-              textDecoration: "none",
-              display: "inline-block",
-              textAlign: "center",
-            }}
-          >
-            VISIT
-          </a>
         </div>
       </div>
       <h2
@@ -678,7 +743,7 @@ function AgrotourismDetail() {
           }}
         >
           <img
-            src={DUMMY_USER.profilePic}
+            src={user?.photo_url || "https://api.dicebear.com/7.x/adventurer-neutral/svg?seed=User"}
             alt="profile"
             style={{
               width: 38,
@@ -687,7 +752,7 @@ function AgrotourismDetail() {
               objectFit: "cover",
             }}
           />
-          <span style={{ fontWeight: 500 }}> {DUMMY_USER.username} </span>
+          <span style={{ fontWeight: 500 }}> {user?.name || user?.username || "User"} </span>
         </div>
         <StarRating value={rating} onChange={setRating} />
         <textarea
@@ -833,22 +898,37 @@ function AgrotourismDetail() {
           </button>
         </div>
       </form>
-      {/* Render review dari array dummy */}
-      <div style={{ width: "95%" }}>
-        {reviews.map((r) => (
-          <ReviewCard
-            key={r.id_agrowisata_reviews}
-            username={r.username}
-            profilePic={r.profilePic}
-            rating={r.rating}
-            comment={r.review_text}
-            photo={r.url_images}
-            id_user={r.id_user}
-            isOwn={r.id_user === CURRENT_USER_ID}
-            onDelete={() => handleDeleteReview(r.id_agrowisata_reviews)}
-            onEdit={() => handleEditReview(r)}
+      {/* Lottie animation if no reviews */}
+      {(!loadingReviews && reviews.length === 0) && (
+        <div style={{ width: 320, margin: "0 auto 16px auto" }}>
+          <DotLottieReact
+            src="https://lottie.host/your-animation-url.lottie"
+            loop
+            autoplay
+            style={{ width: 320, height: 320 }}
           />
-        ))}
+        </div>
+      )}
+      <div style={{ width: "95%" }}>
+        {loadingReviews ? (
+          <div>Loading reviews...</div>
+        ) : reviews.length === 0 ? (
+          <div style={{ color: "#888", textAlign: "center" }}>No reviews yet.</div>
+        ) : (
+          reviews.map((r) => (
+            <ReviewCard
+              key={r.id_agrowisata_reviews}
+              id_user={r.id_user}
+              rating={r.rating}
+              comment={r.review_text}
+              photo={r.url_images}
+              isOwn={user && r.id_user === user.id_user}
+              onDelete={() => handleDeleteReview(r.id_agrowisata_reviews)}
+              onEdit={() => handleEditReview(r)}
+              userProfiles={userProfiles}
+            />
+          ))
+        )}
       </div>
     </MainCard>
   );
@@ -944,6 +1024,7 @@ function AgrotourismList() {
           <AgrotourismCard
             key={item.id_agrowisata}
             {...item}
+            onSeeDetails={() => navigate(`/agrotourism/${item.id_agrowisata}`)}
           />
         ))}
       </div>

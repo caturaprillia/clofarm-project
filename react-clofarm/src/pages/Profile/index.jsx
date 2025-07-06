@@ -1,32 +1,85 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { UploadOutlined } from "@ant-design/icons";
-import { Button, Input, Form, message } from "antd";
+import { Button, Input, Form, message, Popconfirm, notification } from "antd";
+import { useUser } from '../../components/UserContext';
+import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
   const [form] = Form.useForm();
-  const [photo, setPhoto] = useState(
-    "https://api.dicebear.com/7.x/adventurer-neutral/svg?seed=Eka"
-  );
-  const [emailVerified] = useState(true);
+  const { user, loading, fetchUser } = useUser();
   const [isAllFilled, setIsAllFilled] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const navigate = useNavigate();
 
-  // Default data
-  const defaultValues = {
-    name: "Eka Putri Jayanti",
-    email: "eka.putri.jayanti@student.undiksha.ac.id",
-    phone: "085858230833",
-  };
+  useEffect(() => {
+    if (user) {
+      form.setFieldsValue({
+        name: user.name,
+        username: user.username,
+        phone: user.phone_number || "",
+        photo_url: user.photo_url || "",
+      });
+    }
+  }, [user, form]);
 
   // Check if all required fields are filled
   const checkAllFilled = (changed, all) => {
-    const values = { ...defaultValues, ...form.getFieldsValue(), ...all };
-    const required = [values.name, values.email, values.phone];
+    const values = { ...form.getFieldsValue(), ...all };
+    const required = [values.name, values.username, values.phone, values.photo_url];
     setIsAllFilled(required.every((v) => v && v.trim() !== ""));
   };
 
   const handleUpload = () => {
     message.info("Fitur upload belum diimplementasikan.");
   };
+
+  const handleFinish = () => {
+    setShowConfirm(true);
+  };
+
+  const handleConfirmSave = async () => {
+    try {
+      const values = form.getFieldsValue();
+      const token = localStorage.getItem('token');
+      const formData = new FormData();
+      formData.append('name', values.name);
+      formData.append('phone_number', values.phone);
+      formData.append('photo_url', values.photo_url);
+      // username tidak bisa diubah, tidak perlu dikirim
+      const res = await fetch('http://localhost:5000/auth/profile', {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData
+      });
+      if (res.ok) {
+        notification.success({
+          message: 'Profile updated successfully!',
+          placement: 'topRight',
+        });
+        setShowConfirm(false);
+        fetchUser(); // refresh user context
+        navigate('/profile');
+      } else {
+        const data = await res.json();
+        notification.error({
+          message: data.msg || 'Failed to update profile',
+          placement: 'topRight',
+        });
+      }
+    } catch (err) {
+      notification.error({
+        message: 'Failed to update profile',
+        placement: 'topRight',
+      });
+    }
+  };
+
+  const handleCancelSave = () => {
+    setShowConfirm(false);
+  };
+
+  if (loading) return <div style={{textAlign:'center',marginTop:40}}>Loading profile...</div>;
+  if (!user) return <div style={{textAlign:'center',marginTop:40}}>User not found.</div>;
 
   return (
     <div
@@ -41,7 +94,7 @@ const Profile = () => {
       }}
     >
       <h2 style={{ fontWeight: 700, fontSize: 24, marginBottom: 18 }}>
-        Detail Profil
+        Profile Details
       </h2>
       <div
         style={{
@@ -52,7 +105,7 @@ const Profile = () => {
         }}
       >
         <img
-          src={photo}
+          src={user.photo_url || "https://api.dicebear.com/7.x/adventurer-neutral/svg?seed=Eka"}
           alt="Profile"
           style={{
             width: 80,
@@ -63,102 +116,72 @@ const Profile = () => {
             border: "2px solid #eee",
           }}
         />
-        <Button
-          icon={<UploadOutlined />}
-          style={{
-            background: "#1677ff",
-            color: "#fff",
-            fontWeight: 500,
-            borderRadius: 8,
-            marginBottom: 4,
-          }}
-          onClick={handleUpload}
-        >
-          Unggah Foto
-        </Button>
-        <a
-          href="https://www.dicebear.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ color: "#1677ff", fontSize: 15, marginBottom: 2 }}
-        ></a>
-        <div
-          style={{
-            color: "#888",
-            fontSize: 13,
-            marginTop: 2,
-            marginBottom: 8,
-            textAlign: "center",
-          }}
-        >
-          Foto profil kamu disarankan memiliki rasio 1 : 1 atau berukuran tidak
-          lebih dari 2MB
+        <div style={{ color: "#888", fontSize: 13, marginTop: 2, marginBottom: 8, textAlign: "center" }}>
+          Your profile picture is recommended to have a 1:1 ratio and be less than 2MB in size.
         </div>
       </div>
       <Form
         form={form}
         layout="vertical"
-        initialValues={defaultValues}
         onValuesChange={checkAllFilled}
-        onFinish={() => message.success("Profil disimpan!")}
+        onFinish={handleFinish}
       >
         <Form.Item
-          label={<span style={{ fontWeight: 500 }}>Nama</span>}
+          label={<span style={{ fontWeight: 500 }}>Full Name</span>}
           name="name"
           style={{ marginBottom: 12 }}
-          rules={[{ required: true, message: "Nama wajib diisi" }]}
+          rules={[{ required: true, message: "Full name is required" }]}
         >
-          <Input size="large" />
+          <Input size="large" placeholder="Enter your full name" />
         </Form.Item>
         <Form.Item
-          label={<span style={{ fontWeight: 500 }}>Alamat Email</span>}
-          name="email"
-          style={{ marginBottom: 4 }}
-          rules={[
-            { required: true, type: "email", message: "Masukkan email valid" },
-          ]}
+          label={<span style={{ fontWeight: 500 }}>Username</span>}
+          name="username"
+          style={{ marginBottom: 12 }}
         >
-          <Input size="large" />
+          <Input size="large" disabled placeholder="Your username" />
         </Form.Item>
-        <div
-          style={{
-            marginBottom: 10,
-            marginTop: -2,
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-          }}
-        >
-          <span style={{ color: "#27ae60", fontSize: 18 }}>●</span>
-          <span style={{ color: "#27ae60", fontWeight: 500, fontSize: 15 }}>
-            Email Terverifikasi
-          </span>
-        </div>
         <Form.Item
-          label={<span style={{ fontWeight: 500 }}>Nomor WhatsApp</span>}
+          label={<span style={{ fontWeight: 500 }}>Phone Number</span>}
           name="phone"
+          style={{ marginBottom: 12 }}
+        >
+          <Input size="large" placeholder="Enter your WhatsApp number" />
+        </Form.Item>
+        <Form.Item
+          label={<span style={{ fontWeight: 500 }}>Image URL</span>}
+          name="photo_url"
           style={{ marginBottom: 18 }}
         >
-          <Input size="large" />
+          <Input size="large" placeholder="https://your-image-url.com" />
         </Form.Item>
         <Form.Item style={{ textAlign: "right", marginBottom: 0 }}>
-          <Button
-            type="primary"
-            htmlType="submit"
-            style={{
-              background: "#27ae60",
-              border: "none",
-              borderRadius: 8,
-              fontWeight: 600,
-              fontSize: 16,
-              padding: "0 32px",
-              height: 40,
-              transition: "background 0.2s",
-            }}
-            disabled={false}
+          <Popconfirm
+            title="Are you sure you want to save your profile?"
+            open={showConfirm}
+            onConfirm={handleConfirmSave}
+            onCancel={handleCancelSave}
+            okText="Yes"
+            cancelText="No"
           >
-            Simpan
-          </Button>
+            <Button
+              type="primary"
+              htmlType="submit"
+              style={{
+                background: "#27ae60",
+                border: "none",
+                borderRadius: 8,
+                fontWeight: 600,
+                fontSize: 16,
+                padding: "0 32px",
+                height: 40,
+                transition: "background 0.2s",
+              }}
+              disabled={false}
+            >
+              Save
+            </Button>
+          </Popconfirm>
         </Form.Item>
       </Form>
     </div>
