@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   SearchOutlined,
@@ -195,17 +195,62 @@ const styles = {
 };
 
 // Komponen Card
-const AgrotourismCard = ({ image, name, city, province, price, onClick }) => (
-  <div style={styles.card} onClick={onClick} tabIndex={0} role="button">
-    <img src={image} alt={name} style={styles.cardImage} />
+const AgrotourismCard = ({ image_url, name, city, province, ticket_price, maps_url }) => (
+  <div style={styles.card}>
+    <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+      <img
+        src={image_url || dumpict}
+        alt={name}
+        style={{
+          width: "90%",
+          height: 160,
+          margin: "16px auto 0 auto",
+          display: "block",
+          objectFit: "cover",
+          borderRadius: "8px",
+          background: "#f0f0f0",
+        }}
+      />
+    </div>
     <div style={styles.cardContent}>
       <h3 style={styles.cardTitle}>{name}</h3>
       <div style={styles.cardInfo}>
         <EnvironmentOutlined style={{ color: "#059669" }} /> {city}, {province}
       </div>
       <div style={{ ...styles.cardInfo, color: "#6b7280" }}>
-        <DollarCircleOutlined style={{ color: "#059669" }} /> {price}
+        <DollarCircleOutlined style={{ color: "#059669" }} /> {ticket_price}
       </div>
+    </div>
+    <div style={{ padding: "0 12px 12px 12px" }}>
+      <a
+        href={maps_url}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          width: "100%",
+          display: "block",
+          background: "#27ae60",
+          color: "#fff",
+          border: "none",
+          borderRadius: "6px",
+          padding: "5px 0",
+          fontWeight: "bold",
+          textAlign: "center",
+          textDecoration: "none",
+          fontSize: "1.05rem",
+          transition: "background 0.2s, color 0.2s",
+        }}
+        onMouseEnter={e => {
+          e.target.style.background = "#219150";
+          e.target.style.color = "#fff";
+        }}
+        onMouseLeave={e => {
+          e.target.style.background = "#27ae60";
+          e.target.style.color = "#fff";
+        }}
+      >
+        Lihat di Maps
+      </a>
     </div>
   </div>
 );
@@ -812,10 +857,63 @@ function AgrotourismDetail() {
 function AgrotourismList() {
   const [search, setSearch] = useState("");
   const [searchHover, setSearchHover] = useState(false);
+  const [agrowisata, setAgrowisata] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
-  const filteredData = dummyData.filter((item) =>
-    item.name.toLowerCase().includes(search.toLowerCase())
+
+  useEffect(() => {
+    const fetchAgrowisata = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("Token not found. Please login again.");
+        const response = await fetch("http://localhost:5000/agrotourism", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        if (!response.ok) {
+          const errData = await response.json();
+          throw new Error(errData.msg || "Failed to fetch agrotourism");
+        }
+        const data = await response.json();
+        setAgrowisata(data);
+      } catch (err) {
+        setError(err.message);
+        setAgrowisata([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAgrowisata();
+  }, []);
+
+  const filteredData = agrowisata.filter((item) =>
+    item.name?.toLowerCase().includes(search.toLowerCase())
   );
+
+  if (loading) {
+    return (
+      <MainCard>
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "50vh", fontSize: 18, color: "#666" }}>
+          Loading agrotourism...
+        </div>
+      </MainCard>
+    );
+  }
+  if (error) {
+    return (
+      <MainCard>
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "50vh", fontSize: 18, color: "#e74c3c" }}>
+          Error: {error}
+        </div>
+      </MainCard>
+    );
+  }
+
   return (
     <MainCard>
       <h1 style={styles.title}>Agrotourism</h1>
@@ -844,9 +942,8 @@ function AgrotourismList() {
       <div style={styles.grid}>
         {filteredData.map((item) => (
           <AgrotourismCard
-            key={item.id}
+            key={item.id_agrowisata}
             {...item}
-            onClick={() => navigate(`/agrotourism/${item.id}`)}
           />
         ))}
       </div>

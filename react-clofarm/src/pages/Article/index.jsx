@@ -1,37 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import dumpict from "../../assets/images/dumpict.jpg";
-const articles = [
-  {
-    id: 1,
-    image: dumpict,
-    title: "Teknologi Pertanian Modern",
-    description: "Inovasi terbaru pertanian.",
-    url: "https://example.com/article/1",
-  },
-  {
-    id: 2,
-    image: dumpict,
-    title: "Tips Merawat Tanaman",
-    description: "Tips merawat tanaman organik.",
-    url: "https://example.com/article/2",
-  },
-  {
-    id: 3,
-    image: dumpict,
-    title: "Peluang Bisnis Agrowisata",
-    description: "Peluang bisnis agrowisata.",
-    url: "https://example.com/article/3",
-  },
-  {
-    id: 4,
-    image: dumpict,
-    title: "Manfaat Kompos",
-    description: "Manfaat kompos untuk tanah.",
-    url: "https://example.com/article/4",
-  },
-];
-const ArticleCard = ({ image, title, description, url }) => (
+
+const ArticleCard = ({ image_url, title, description, article_url }) => (
   <div
     style={{
       background: "#fff",
@@ -47,24 +18,21 @@ const ArticleCard = ({ image, title, description, url }) => (
       margin: "0 auto",
     }}
   >
-    {" "}
-    <div>
-      {" "}
+    <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
       <img
-        src={image}
+        src={image_url || require('../../assets/images/dumpict.jpg')}
         alt={title}
         style={{
           width: "90%",
-          height: "90%",
+          height: "180px",
           margin: "16px auto 0 auto",
-          display: "flex",
+          display: "block",
           objectFit: "cover",
           borderRadius: "8px",
-          alignItems: "center",
-          justifyContent: "center",
+          background: "#f0f0f0",
         }}
-      />{" "}
-    </div>{" "}
+      />
+    </div>
     <div
       style={{
         padding: "8px 12px 6px 12px",
@@ -73,7 +41,6 @@ const ArticleCard = ({ image, title, description, url }) => (
         flexDirection: "column",
       }}
     >
-      {" "}
       <h3
         style={{
           margin: "12px 0 4px 0",
@@ -82,18 +49,15 @@ const ArticleCard = ({ image, title, description, url }) => (
           color: "#222",
         }}
       >
-        {" "}
-        {title}{" "}
-      </h3>{" "}
+        {title}
+      </h3>
       <div style={{ fontSize: "0.92rem", color: "#888", marginBottom: "8px" }}>
-        {" "}
-        {description}{" "}
-      </div>{" "}
-    </div>{" "}
+        {description}
+      </div>
+    </div>
     <div style={{ padding: "0 12px 12px 12px" }}>
-      {" "}
       <a
-        href={url}
+        href={article_url}
         target="_blank"
         rel="noopener noreferrer"
         style={{
@@ -119,14 +83,119 @@ const ArticleCard = ({ image, title, description, url }) => (
           e.target.style.color = "#fff";
         }}
       >
-        {" "}
-        Read Article{" "}
-      </a>{" "}
-    </div>{" "}
+        Read Article
+      </a>
+    </div>
   </div>
 );
+
 const Article = () => {
   const [searchHover, setSearchHover] = useState(false);
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Fetch articles from backend
+  useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        setLoading(true);
+        // Get token from localStorage
+        const token = localStorage.getItem('token');
+        
+        const response = await fetch('http://localhost:5000/articles', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch articles');
+        }
+
+        const data = await response.json();
+        setArticles(data);
+      } catch (err) {
+        console.error('Error fetching articles:', err);
+        setError(err.message);
+        // Fallback to dummy data if API fails
+        setArticles([
+          {
+            id_articles: 1,
+            image_url: dumpict,
+            title: "Teknologi Pertanian Modern",
+            description: "Inovasi terbaru pertanian.",
+            article_url: "https://example.com/article/1",
+          },
+          {
+            id_articles: 2,
+            image_url: dumpict,
+            title: "Tips Merawat Tanaman",
+            description: "Tips merawat tanaman organik.",
+            article_url: "https://example.com/article/2",
+          },
+          {
+            id_articles: 3,
+            image_url: dumpict,
+            title: "Peluang Bisnis Agrowisata",
+            description: "Peluang bisnis agrowisata.",
+            article_url: "https://example.com/article/3",
+          },
+          {
+            id_articles: 4,
+            image_url: dumpict,
+            title: "Manfaat Kompos",
+            description: "Manfaat kompos untuk tanah.",
+            article_url: "https://example.com/article/4",
+          },
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchArticles();
+  }, []);
+
+  // Filter articles based on search term
+  const filteredArticles = articles.filter(article =>
+    article.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    article.description?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  if (loading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '50vh',
+        fontSize: '18px',
+        color: '#666'
+      }}>
+        Loading articles...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '50vh',
+        fontSize: '18px',
+        color: '#e74c3c'
+      }}>
+        Error: {error}
+      </div>
+    );
+  }
+
   return (
     <div
       style={{
@@ -187,6 +256,8 @@ const Article = () => {
           <input
             type="text"
             placeholder="Search..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             style={{
               width: "100%",
               height: "100%",
@@ -214,12 +285,13 @@ const Article = () => {
           }}
         >
           {" "}
-          {articles.map((article) => (
-            <ArticleCard key={article.id} {...article} />
+          {filteredArticles.map((article) => (
+            <ArticleCard key={article.id_articles} {...article} />
           ))}{" "}
         </div>{" "}
       </div>{" "}
     </div>
   );
 };
+
 export default Article;

@@ -1,56 +1,101 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
 import "./register.css";
 
 function Register() {
-  const [nama, setNama] = useState("");
-  const [email, setEmail] = useState("");
-  const [telepon, setTelepon] = useState("");
+  const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const isValid =
-    nama.trim() && email.trim() && telepon.trim() && password.trim();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
+
+  const isValid = username.trim() && name.trim() && phone.trim() && password.trim();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!isValid) return;
+    setError("");
+    setSuccess("");
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("username", username);
+      formData.append("name", name);
+      formData.append("phone_number", phone);
+      formData.append("password", password);
+      // formData.append("photo_url", ""); // opsional, bisa tambahkan jika ingin
+
+      const response = await fetch("http://localhost:5000/auth/register", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.msg || "Register failed");
+      }
+      setSuccess("Register berhasil! Silakan login.");
+      setTimeout(() => navigate("/login"), 1200);
+    } catch (err) {
+      setError(err.message || "Register failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="auth-container">
       <div className="auth-left">
-        <form className="register-form">
+        <form className="register-form" onSubmit={handleSubmit}>
           <div className="register-title">Register</div>
+          {error && (
+            <div style={{ color: "#e74c3c", fontSize: 14, marginBottom: 12, textAlign: "center" }}>{error}</div>
+          )}
+          {success && (
+            <div style={{ color: "#27ae60", fontSize: 14, marginBottom: 12, textAlign: "center" }}>{success}</div>
+          )}
           <div className="form-group">
-            <label htmlFor="nama">Name</label>
+            <label htmlFor="username">Username</label>
             <input
               type="text"
-              id="nama"
-              name="nama"
+              id="username"
+              name="username"
               className="input"
               required
-              value={nama}
-              onChange={(e) => setNama(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              disabled={loading}
             />
           </div>
           <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="name">Name</label>
             <input
-              type="email"
-              id="email"
-              name="email"
+              type="text"
+              id="name"
+              name="name"
               className="input"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              disabled={loading}
             />
           </div>
           <div className="form-group">
-            <label htmlFor="telepon">Phone Number</label>
+            <label htmlFor="phone">Phone Number</label>
             <input
               type="text"
-              id="telepon"
-              name="telepon"
+              id="phone"
+              name="phone"
               className="input"
               required
-              value={telepon}
-              onChange={(e) => setTelepon(e.target.value)}
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              disabled={loading}
             />
           </div>
           <div className="form-group password-group">
@@ -64,6 +109,7 @@ function Register() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={loading}
               />
               <span
                 className="eye-icon"
@@ -75,19 +121,17 @@ function Register() {
                 {showPassword ? (
                   <EyeOutlined style={{ fontSize: 22, color: "#888" }} />
                 ) : (
-                  <EyeInvisibleOutlined
-                    style={{ fontSize: 22, color: "#888" }}
-                  />
+                  <EyeInvisibleOutlined style={{ fontSize: 22, color: "#888" }} />
                 )}
               </span>
             </div>
           </div>
           <button
             type="submit"
-            className={`register-btn${!isValid ? " disabled" : ""}`}
-            disabled={!isValid}
+            className={`register-btn${!isValid || loading ? " disabled" : ""}`}
+            disabled={!isValid || loading}
           >
-            Register
+            {loading ? "Registering..." : "Register"}
           </button>
           <div className="auth-link">
             Already have an account?{" "}

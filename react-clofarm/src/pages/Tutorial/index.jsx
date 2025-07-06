@@ -1,59 +1,118 @@
-import React from "react";
-import {
-  LogoutOutlined,
-  SettingOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import React, { useState, useEffect } from "react";
+import { SearchOutlined } from "@ant-design/icons";
 import cardImg from "../../assets/images/dumpict.jpg";
 
-// --- Data Dummy ---
-const mockTutorials = [
-  {
-    id: 1,
-    title: "Cara Menanam Padi",
-    description: "Panduan lengkap dari benih hingga panen.",
-  },
-  {
-    id: 2,
-    title: "Budidaya Hidroponik",
-    description: "Mulai kebun hidroponik di rumah Anda.",
-  },
-  {
-    id: 3,
-    title: "Manajemen Irigasi",
-    description: "Teknik irigasi modern untuk efisiensi air.",
-  },
-  {
-    id: 4,
-    title: "Pengendalian Hama",
-    description: "Metode organik untuk melindungi tanaman.",
-  },
-  {
-    id: 5,
-    title: "Pupuk Kompos Organik",
-    description: "Ubah sampah organik menjadi pupuk kaya nutrisi.",
-  },
-  {
-    id: 6,
-    title: "Agrowisata dari Nol",
-    description: "Membangun bisnis agrowisata yang sukses.",
-  },
-];
-
 // --- Komponen Kartu Tutorial ---
-const TutorialCard = ({ title, description }) => (
+const TutorialCard = ({ thumbnail_url, title, description, tutorial_url }) => (
   <div style={styles.card}>
-    <img src={cardImg} alt={title} style={styles.cardImage} />
+    <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+      <img
+        src={thumbnail_url || cardImg}
+        alt={title}
+        style={{
+          width: "90%",
+          height: "160px",
+          margin: "16px auto 0 auto",
+          display: "block",
+          objectFit: "cover",
+          borderRadius: "8px",
+          background: "#f0f0f0",
+        }}
+      />
+    </div>
     <div style={styles.cardContent}>
       <h3 style={styles.cardTitle}>{title}</h3>
       <p style={styles.cardDescription}>{description}</p>
     </div>
+    <div style={{ padding: "0 12px 12px 12px" }}>
+      <a
+        href={tutorial_url}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          width: "100%",
+          display: "block",
+          background: "#27ae60",
+          color: "#fff",
+          border: "none",
+          borderRadius: "6px",
+          padding: "5px 0",
+          fontWeight: "bold",
+          textAlign: "center",
+          textDecoration: "none",
+          fontSize: "1.05rem",
+          transition: "background 0.2s, color 0.2s",
+        }}
+        onMouseEnter={e => {
+          e.target.style.background = "#219150";
+          e.target.style.color = "#fff";
+        }}
+        onMouseLeave={e => {
+          e.target.style.background = "#27ae60";
+          e.target.style.color = "#fff";
+        }}
+      >
+        Lihat Tutorial
+      </a>
+    </div>
   </div>
 );
 
-// --- Komponen Utama Halaman ---
 export default function TutorialPage() {
-  const [searchHover, setSearchHover] = React.useState(false);
+  const [searchHover, setSearchHover] = useState(false);
+  const [tutorials, setTutorials] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    const fetchTutorials = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("Token not found. Please login again.");
+        const response = await fetch("http://localhost:5000/tutorials", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        if (!response.ok) {
+          const errData = await response.json();
+          throw new Error(errData.msg || "Failed to fetch tutorials");
+        }
+        const data = await response.json();
+        setTutorials(data);
+      } catch (err) {
+        setError(err.message);
+        setTutorials([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTutorials();
+  }, []);
+
+  const filteredTutorials = tutorials.filter(tutorial =>
+    tutorial.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    tutorial.description?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  if (loading) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "50vh", fontSize: 18, color: "#666" }}>
+        Loading tutorials...
+      </div>
+    );
+  }
+  if (error) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "50vh", fontSize: 18, color: "#e74c3c" }}>
+        Error: {error}
+      </div>
+    );
+  }
 
   return (
     <div style={{ background: "#f9fafb", minHeight: "100vh", width: "100%" }}>
@@ -107,6 +166,8 @@ export default function TutorialPage() {
           <input
             type="text"
             placeholder="Search..."
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
             style={{
               width: "100%",
               height: "100%",
@@ -120,8 +181,8 @@ export default function TutorialPage() {
           />
         </div>
         <div style={{ ...styles.cardGrid, marginTop: 10 }}>
-          {[...mockTutorials, ...mockTutorials].map((tutorial, index) => (
-            <TutorialCard key={`${tutorial.id}-${index}`} {...tutorial} />
+          {filteredTutorials.map((tutorial) => (
+            <TutorialCard key={tutorial.id_tutorials} {...tutorial} />
           ))}
         </div>
       </div>
@@ -219,7 +280,7 @@ const styles = {
   },
   cardGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(4, 1fr)", // 4 kolom tetap di desktop
+    gridTemplateColumns: "repeat(4, 1fr)",
     gap: "25px",
     width: "100%",
     margin: 0,
@@ -231,13 +292,6 @@ const styles = {
     borderRadius: "12px",
     display: "flex",
     flexDirection: "column",
-  },
-  cardImage: {
-    height: "160px",
-    width: "100%",
-    objectFit: "cover",
-    borderTopLeftRadius: "12px",
-    borderTopRightRadius: "12px",
   },
   cardContent: { padding: "15px" },
   cardTitle: {
