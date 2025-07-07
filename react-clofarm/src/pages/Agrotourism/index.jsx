@@ -145,6 +145,61 @@ const styles = {
   },
 };
 
+const cardStyle = {
+  background: "#fff",
+  border: "1px solid #e5e7eb",
+  borderRadius: 12,
+  boxShadow: "0 1px 3px 0 rgba(0,0,0,0.05)",
+  width: "100%",
+  minHeight: 320,
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "flex-start",
+  padding: "0 0 18px 0"
+};
+const imgStyle = {
+  width: "90%",
+  height: 160,
+  margin: "16px auto 0 auto",
+  display: "block",
+  objectFit: "cover",
+  borderRadius: 8,
+  background: "#e5e7eb"
+};
+const titleStyle = {
+  fontWeight: 700,
+  fontSize: 19,
+  margin: "16px 0 8px 0",
+  color: "#111827",
+  textAlign: "center"
+};
+const infoStyle = {
+  color: "#6b7280",
+  fontSize: 16,
+  marginBottom: 18,
+  fontFamily: "Poppins, sans-serif",
+  lineHeight: 1.5,
+  textAlign: "center"
+};
+const btnStyle = {
+  background: "#27ae60",
+  color: "#fff",
+  border: "none",
+  borderRadius: 8,
+  padding: "10px 0",
+  fontWeight: 600,
+  fontSize: "16.5px",
+  cursor: "pointer",
+  width: "90%",
+  fontFamily: "Poppins, sans-serif",
+  marginTop: "auto",
+  transition: "background 0.18s",
+  textAlign: "center",
+  textDecoration: "none",
+  display: "block"
+};
+
 // Komponen Card
 const AgrotourismCard = ({
   image_url,
@@ -154,67 +209,20 @@ const AgrotourismCard = ({
   ticket_price,
   onSeeDetails,
 }) => (
-  <div style={styles.card}>
-    <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
-      <img
-        src={image_url || dumpict}
-        alt={name}
-        style={{
-          width: "90%",
-          height: 160,
-          margin: "16px auto 0 auto",
-          display: "block",
-          objectFit: "cover",
-          borderRadius: "8px",
-          background: "#f0f0f0",
-        }}
-      />
+  <div style={cardStyle}>
+    <img src={image_url || dumpict} alt={name} style={imgStyle} />
+    <div style={titleStyle}>{name}</div>
+    <div style={infoStyle}>
+      <span style={{ display: "block", marginBottom: 2 }}>
+        <i className="fas fa-map-marker-alt" style={{ color: "#27ae60", marginRight: 6 }} />
+        {city}, {province}
+      </span>
+      <span style={{ display: "block" }}>
+        <i className="fas fa-dollar-sign" style={{ color: "#27ae60", marginRight: 6 }} />
+        Rp. {Number(ticket_price).toLocaleString()}
+      </span>
     </div>
-    <div style={styles.cardContent}>
-      <h3 style={styles.cardTitle}>{name}</h3>
-      <div style={styles.cardInfo}>
-        <EnvironmentOutlined style={{ color: "#059669" }} /> {city}, {province}
-      </div>
-      <div style={{ ...styles.cardInfo, color: "#6b7280" }}>
-        <DollarCircleOutlined style={{ color: "#059669" }} /> {ticket_price}
-      </div>
-    </div>
-    <div style={{ padding: "0 12px 12px 12px" }}>
-      <button
-        onClick={onSeeDetails}
-        style={{
-          width: "100%",
-          display: "block",
-          background: "#27ae60",
-          color: "#fff",
-          border: "none",
-          borderRadius: "6px",
-          padding: "5px 0",
-          fontWeight: "bold",
-          textAlign: "center",
-          textDecoration: "none",
-          fontSize: "1.05rem",
-          transition: "background 0.2s, color 0.2s",
-          cursor: "pointer",
-          outline: "none", // tambahkan ini
-        }}
-        tabIndex={0}
-        onMouseEnter={(e) => {
-          e.target.style.background = "#219150";
-          e.target.style.color = "#fff";
-        }}
-        onMouseLeave={(e) => {
-          e.target.style.background = "#27ae60";
-          e.target.style.color = "#fff";
-        }}
-        onFocus={(e) => {
-          e.target.style.outline = "none"; // hilangkan outline hitam saat focus/click
-          e.target.style.boxShadow = "none"; // hilangkan shadow biru browser
-        }}
-      >
-        See Details
-      </button>
-    </div>
+    <button onClick={onSeeDetails} style={btnStyle}>See Details</button>
   </div>
 );
 

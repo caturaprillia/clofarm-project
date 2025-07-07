@@ -59,17 +59,19 @@ def login():
 @auth_bp.route('/profile', methods=['GET'])
 @jwt_required()
 def get_profile():
-    user_id = get_jwt_identity()
+    id_user = request.args.get('id_user', None)
+    if id_user is None or str(id_user).strip() == '':
+        id_user = get_jwt_identity()
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute('SELECT * FROM tb_users WHERE id_user = %s', (user_id,))
+    cursor.execute('SELECT * FROM tb_users WHERE id_user = %s', (id_user,))
     user = cursor.fetchone()
     cursor.close()
     conn.close()
     if not user:
         return jsonify({'msg': 'User not found'}), 404
     user_data = user.copy()
-    user_data.pop('password')
+    user_data.pop('password', None)
     return jsonify(user_data), 200
 
 # Update Profile

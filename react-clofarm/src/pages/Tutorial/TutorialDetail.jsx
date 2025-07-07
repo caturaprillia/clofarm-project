@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import cardImg from "../../assets/images/dumpict.jpg";
+import cardImg from "../../assets/images/seed.jpg";
+
 
 const steps = [
   {
@@ -45,94 +46,69 @@ const steps = [
   },
 ];
 
-// Komponen Card Tutorial sesuai desain gambar user
+
+// Komponen Card Tutorial identik dengan index.jsx
 function TutorialCard({ thumbnail_url, title, description, tutorial_url }) {
+  const cardStyle = {
+    background: "#fff",
+    border: "1px solid #e5e7eb",
+    borderRadius: 12,
+    boxShadow: "0 1px 3px 0 rgba(0,0,0,0.05)",
+    width: "100%",
+    minHeight: 320,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    padding: "0 0 18px 0"
+  };
+  const imgStyle = {
+    width: "90%",
+    height: 160,
+    margin: "16px auto 0 auto",
+    display: "block",
+    objectFit: "cover",
+    borderRadius: 8,
+    background: "#e5e7eb"
+  };
+  const titleStyle = {
+    fontWeight: 700,
+    fontSize: 17,
+    margin: "16px 0 8px 0",
+    color: "#111827",
+    textAlign: "left"
+  };
+  const descStyle = {
+    color: "#6b7280",
+    fontSize: 14,
+    marginBottom: 18,
+    fontFamily: "Poppins, sans-serif",
+    lineHeight: 1.5,
+    textAlign: "center"
+  };
+  const btnStyle = {
+    background: "#27ae60",
+    color: "#fff",
+    border: "none",
+    borderRadius: 8,
+    padding: "10px 0",
+    fontWeight: 600,
+    fontSize: "16.5px",
+    cursor: "pointer",
+    width: "90%",
+    fontFamily: "Poppins, sans-serif",
+    marginTop: "auto",
+    transition: "background 0.18s",
+    textAlign: "center",
+    textDecoration: "none",
+    display: "block"
+  };
   return (
-    <div
-      style={{
-        border: "1px solid #e5e7eb", // samakan dengan card lain
-        borderRadius: 12, // samakan dengan card lain
-        boxShadow: "0 1px 6px 0 rgba(0,0,0,0.08)", // samakan dengan card lain
-        background: "#fff",
-        padding: "0 0 24px 0",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "stretch",
-        minHeight: 10,
-        maxWidth: 270,
-        height: 320,
-        margin: "0 auto",
-        transition: "box-shadow 0.18s, border 0.18s",
-      }}
-    >
-      <img
-        src={thumbnail_url || cardImg}
-        alt={title}
-        style={{
-          width: "100%",
-          height: 150,
-          objectFit: "cover",
-          borderTopLeftRadius: 12, // samakan dengan card lain
-          borderTopRightRadius: 12, // samakan dengan card lain
-          background: "#f0f0f0",
-        }}
-      />
-      <div style={{ padding: "18px 18px 0 18px", flex: 1 }}>
-        <div
-          style={{
-            fontWeight: 700,
-            fontSize: 20,
-            marginBottom: 6,
-            color: "#222",
-            lineHeight: 1.2,
-          }}
-        >
-          {title}
-        </div>
-        <div
-          style={{
-            color: "#8a929b",
-            fontSize: 16,
-            marginBottom: 24,
-            lineHeight: 1.2,
-            minHeight: 10,
-          }}
-        >
-          {description}
-        </div>
-      </div>
-      <div style={{ padding: "0 18px" }}>
-        <a
-          href={tutorial_url || "#"}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            width: "100%",
-            display: "block",
-            background: "#27ae60",
-            color: "#fff",
-            border: "none",
-            borderRadius: 6,
-            padding: "7px 0",
-            fontWeight: 700,
-            textAlign: "center",
-            textDecoration: "none",
-            fontSize: "1.05rem",
-            marginTop: 0,
-            transition: "background 0.18s, color 0.18s",
-            boxShadow: "0 1px 4px 0 rgba(39,174,96,0.08)",
-            letterSpacing: 0.2,
-          }}
-          onMouseEnter={(e) => {
-            e.target.style.background = "#219150";
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.background = "#27ae60";
-          }}
-        >
-          See Tutorial
-        </a>
-      </div>
+    <div style={cardStyle}>
+      <img src={thumbnail_url} alt={title} style={imgStyle} />
+      <div style={titleStyle}>{title}</div>
+      <div style={descStyle}>{description}</div>
+      <a href={tutorial_url} target="_blank" rel="noopener noreferrer" style={btnStyle}>See Tutorial</a>
     </div>
   );
 }
@@ -158,11 +134,14 @@ export default function TutorialDetail() {
         });
         if (!response.ok) throw new Error("Failed to fetch tutorials");
         const data = await response.json();
+        console.log("Fetched tutorials:", data); // DEBUG
         // Filter agar tidak menampilkan tutorial yang sedang dibuka
-        const filtered = data.filter(
-          (t) => String(t.id_tutorials) !== String(id)
-        );
+        const filtered = data.filter((t) => String(t.id_tutorials) !== String(id));
+        console.log("Filtered other tutorials:", filtered); // DEBUG
         setOtherTutorials(filtered.slice(0, 4));
+        if (filtered.length === 0) {
+          console.warn("No other tutorials found. Current id:", id, "All data:", data);
+        }
       } catch (err) {
         setError(err.message);
         setOtherTutorials([]);
@@ -174,25 +153,37 @@ export default function TutorialDetail() {
   }, [id]);
 
   return (
-    <div style={{ padding: 32, maxWidth: 1300, margin: "0 auto" }}>
+    <div style={{
+      background: "#f9fafb",
+      minHeight: "100vh",
+      width: "100%",
+      padding: 0,
+    }}>
       <div
         style={{
           background: "#fff",
           borderRadius: 14,
           boxShadow: "0 4px 24px 0 rgba(0,0,0,0.08)",
-          padding: "32px 36px 40px 36px",
+          padding: "25px 30px",
+          maxWidth: 1550,
+          margin: "0 auto 30px auto",
+          boxSizing: "border-box",
         }}
       >
         <h1
           style={{
-            fontSize: 36,
+            fontSize: "2.1rem",
             fontWeight: 700,
-            marginBottom: 36,
+            marginBottom: 32,
             letterSpacing: 1,
+            fontFamily: '"Poppins", sans-serif',
           }}
         >
-          Clofarm Tutorial
+          Seeding Stage Tutorial
         </h1>
+        <div style={{ fontSize: "1.1rem", color: "#888", marginBottom: 28, fontFamily: 'Poppins, sans-serif' }}>
+          You can see the tutorial details by clicking the number
+        </div>
         <div
           style={{
             display: "flex",
@@ -202,7 +193,18 @@ export default function TutorialDetail() {
           }}
         >
           {/* Step by step (expand/collapse) */}
-          <div style={{ flex: 1, minWidth: 320 }}>
+          <div style={{ flex: 1, minWidth: 320, position: "relative" }}>
+            {/* Vertical connecting line for all steps */}
+            <div style={{
+              position: "absolute",
+              left: 20, // center of the circles (40px wide)
+              top: 0,
+              width: 4,
+              height: `calc(100% - 40px)`,
+              background: "#27ae60",
+              zIndex: 0,
+              borderRadius: 2,
+            }} />
             {steps.map((step, idx) => {
               const isOpen = openSteps.includes(idx);
               const allOpen = openSteps.length === steps.length;
@@ -214,6 +216,8 @@ export default function TutorialDetail() {
                     alignItems: "flex-start",
                     marginBottom: idx < steps.length - 1 ? 32 : 0,
                     cursor: "pointer",
+                    position: "relative",
+                    zIndex: 1,
                   }}
                   onClick={() =>
                     setOpenSteps(
@@ -232,6 +236,7 @@ export default function TutorialDetail() {
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "center",
+                      zIndex: 2,
                     }}
                   >
                     <div
@@ -246,28 +251,13 @@ export default function TutorialDetail() {
                         justifyContent: "center",
                         fontWeight: 700,
                         fontSize: 22,
-                        zIndex: 1,
+                        zIndex: 2,
                         transition: "background 0.18s",
+                        fontFamily: '"Poppins", sans-serif',
                       }}
                     >
                       {idx + 1}
                     </div>
-                    {/* Garis penghubung antar bulatan, hanya jika step aktif */}
-                    {idx < steps.length - 1 && isOpen && (
-                      <div
-                        style={{
-                          position: "absolute",
-                          top: 40, // tepat di bawah bulatan
-                          left: "50%",
-                          transform: "translateX(-50%)",
-                          width: 4,
-                          height: 40,
-                          background: "#27ae60",
-                          borderRadius: 2,
-                          zIndex: 0,
-                        }}
-                      />
-                    )}
                   </div>
                   {/* Step content */}
                   <div>
@@ -276,6 +266,7 @@ export default function TutorialDetail() {
                         fontWeight: 600,
                         fontSize: 20,
                         marginBottom: isOpen && step.desc.length ? 6 : 18,
+                        fontFamily: '"Poppins", sans-serif',
                       }}
                     >
                       {step.title}
@@ -288,6 +279,7 @@ export default function TutorialDetail() {
                           color: "#222",
                           fontSize: 16,
                           marginBottom: 18,
+                          fontFamily: '"Poppins", sans-serif',
                         }}
                       >
                         {step.desc.map((d, i) => (
@@ -318,11 +310,11 @@ export default function TutorialDetail() {
         {/* Section Other Tutorial - SEKARANG DI DALAM CONTAINER PUTIH YANG SAMA */}
         <h2
           style={{
-            fontSize: 28,
+            fontSize: "2.1rem",
             fontWeight: 700,
             marginTop: 48,
-            marginBottom: 24,
-            letterSpacing: 0.5,
+            marginBottom: 32,
+            letterSpacing: 1,
             color: "#222",
             textAlign: "left",
           }}
@@ -333,7 +325,9 @@ export default function TutorialDetail() {
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(4, 1fr)",
-            gap: 28,
+            gap: "25px",
+            width: "100%",
+            margin: 0,
             marginBottom: 32,
           }}
         >
@@ -362,9 +356,13 @@ export default function TutorialDetail() {
               {error}
             </div>
           ) : (
-            otherTutorials.map((tut, idx) => (
-              <TutorialCard key={idx} {...tut} />
-            ))
+            otherTutorials.length > 0 ? (
+              otherTutorials.map((tut, idx) => (
+                <TutorialCard key={tut.id_tutorials || idx} {...tut} />
+              ))
+            ) : (
+              <div style={{ gridColumn: "span 4", textAlign: "center", color: "#888", fontSize: 17, padding: 32 }}>No other tutorials found.</div>
+            )
           )}
         </div>
       </div>

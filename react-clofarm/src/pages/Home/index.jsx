@@ -262,7 +262,22 @@ export default function Home() {
               <>
                 <img src={latest.mentorship.image_url} alt={latest.mentorship.title} style={imgStyle} />
                 <div style={titleStyle}>{latest.mentorship.title}</div>
-                <div style={descStyle}>{latest.mentorship.description}</div>
+                <div style={descStyle}>
+                  {latest.mentorship.description && latest.mentorship.description.length > 100
+                    ? (
+                        <>
+                          {latest.mentorship.description.slice(0, 100)}...
+                          <span
+                            style={{ color: "#27ae60", cursor: "pointer", marginLeft: 6, fontWeight: 500 }}
+                            onClick={() => navigate(`/mentorship/${latest.mentorship.id_mentorship}`)}
+                          >
+                            See more
+                          </span>
+                        </>
+                      )
+                    : latest.mentorship.description
+                  }
+                </div>
                 <button onClick={() => navigate(`/mentorship/${latest.mentorship.id_mentorship}`)} style={btnStyle}>Lihat Program</button>
               </>
             ) : <div style={noDataStyle}>No data</div>}

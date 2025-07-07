@@ -1,403 +1,274 @@
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import React, { useState } from "react";
-import { Select } from "antd";
+import { Form, Input, Select, Button, notification } from "antd";
+import { useUser } from "../../components/UserContext";
 
-const mentorships = [
-  {
-    id: 1,
-    title: "Clofarm Mentorship",
-    description: `Lorem ipsum dolor sit amet\nLorem ipsum dolor sit amet\nLorem ipsum dolor sit amet\nLorem ipsum dolor sit amet`,
-    image:
-      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80",
-  },
-  // ... mentorship lain
-];
-
-export default function Detail() {
+export default function MentorshipDetail() {
   const { id } = useParams();
-  const mentorship = mentorships.find((m) => m.id === Number(id));
+  const { user } = useUser();
+  const [mentorship, setMentorship] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({
-    name: "",
-    phone: "",
-    occupation: "",
-    email: "",
-    address: "",
-  });
+  const [submitting, setSubmitting] = useState(false);
+  const [showWhatsapp, setShowWhatsapp] = useState(false);
+  const [form] = Form.useForm();
+  const [registration, setRegistration] = useState(null);
 
-  if (!mentorship) return <div>Mentorship tidak ditemukan</div>;
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  useEffect(() => {
+    const fetchDetail = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem("token");
+        const [mentRes, regRes] = await Promise.all([
+          fetch(`http://localhost:5000/mentorship/${id}`, { headers: { Authorization: `Bearer ${token}` } }),
+          fetch("http://localhost:5000/mentorship_regist", { headers: { Authorization: `Bearer ${token}` } })
+        ]);
+        if (!mentRes.ok) throw new Error("Failed to fetch mentorship detail");
+        const data = await mentRes.json();
+        setMentorship(data);
+        if (regRes.ok && user) {
+          const regList = await regRes.json();
+          const reg = regList.find(r => r.id_user === user.id_user && String(r.id_mentorship) === String(id));
+          if (reg) {
+            setRegistration(reg);
+            setShowWhatsapp(true);
+            setShowForm(false);
+          } else {
+            setRegistration(null);
+            setShowWhatsapp(false);
+          }
+        }
+      } catch (err) {
+        setError(err.message);
+        setMentorship(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDetail();
+  }, [id, user]);
 
   const handleCancel = () => {
     setShowForm(false);
-    setForm({ name: "", phone: "", occupation: "", email: "", address: "" });
+    form.resetFields();
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Simulasi submit
-    alert("Pendaftaran berhasil!");
-    setShowForm(false);
-    setForm({ name: "", phone: "", occupation: "", email: "", address: "" });
+  const handleSubmit = async (values) => {
+    setSubmitting(true);
+    try {
+      const token = localStorage.getItem("token");
+      const formData = new FormData();
+      formData.append("id_mentorship", id);
+      formData.append("name", values.name);
+      formData.append("email", values.email);
+      formData.append("phone_number", values.phone_number);
+      formData.append("address", values.address);
+      formData.append("occupation", values.occupation);
+      const res = await fetch("http://localhost:5000/mentorship_regist", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+      let isJson = res.headers.get("content-type")?.includes("application/json");
+      if (!res.ok) {
+        let errMsg = "Failed to register";
+        if (isJson) {
+          const errData = await res.json();
+          errMsg = errData.msg || errMsg;
+        }
+        notification.error({ message: "Registration Failed", description: errMsg });
+        throw new Error(errMsg);
+      }
+      notification.success({ message: "Registration Success", description: "Registration successful! Click the WhatsApp button below to join the group." });
+      setShowForm(false);
+      setShowWhatsapp(true);
+      form.resetFields();
+    } catch (err) {
+      // error notification already shown
+    } finally {
+      setSubmitting(false);
+    }
   };
+
+  if (loading) return <div>Loading...</div>;
+  if (error || !mentorship) return <div>Error: {error || "Not found"}</div>;
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "3rem 0",
-        minHeight: "80vh",
-      }}
-    >
+    <div style={{ background: "#f9fafb", minHeight: "100vh", width: "100%" }}>
       <div
         style={{
-          display: "flex",
-          gap: "3rem",
           background: "#fff",
           borderRadius: 14,
           boxShadow: "0 4px 24px 0 rgba(0,0,0,0.08)",
           padding: "25px 30px",
-          maxWidth: 1150,
+          maxWidth: 1550,
           margin: "0 auto 30px auto",
-          width: "100%",
           boxSizing: "border-box",
-          alignItems: "flex-start",
+          display: "flex",
           flexDirection: "column",
+          gap: 32,
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            width: "100%",
-            gap: "3rem",
-            alignItems: "flex-start",
-          }}
-        >
+        {/* Atas: deskripsi dan gambar, konsisten dengan index.jsx */}
+        <div style={{ display: "flex", width: "100%", gap: "3rem", alignItems: "flex-start", flexWrap: "wrap" }}>
           <div style={{ flex: 1 }}>
-            <h1
-              style={{
-                fontWeight: "bold",
-                fontSize: "2rem",
-                marginBottom: "1.2rem",
-              }}
-            >
-              Mentorship
-            </h1>
-            <h2
-              style={{
-                fontWeight: "bold",
-                fontSize: "1.5rem",
-                marginBottom: "1.2rem",
-              }}
-            >
-              {mentorship.title}
-            </h2>
-            <div
-              style={{
-                marginBottom: "2rem",
-                fontSize: "1.1rem",
-                color: "#444",
-                lineHeight: 1.7,
-                whiteSpace: "pre-line",
-              }}
-            >
-              {mentorship.description}
-            </div>
-            <button
-              style={{
-                background: "#27ae60",
-                color: "#fff",
-                border: "none",
-                borderRadius: 8,
-                padding: "10px 32px",
-                fontWeight: 600,
-                fontSize: "16.5px",
-                cursor: "pointer",
-                fontFamily: "Poppins, sans-serif",
-                marginTop: "auto",
-                transition: "background 0.18s",
-                outline: "none",
-                boxShadow: "none",
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.background = "#219150";
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.background = "#27ae60";
-              }}
-              onFocus={(e) => {
-                e.target.style.outline = "none";
-                e.target.style.boxShadow = "none";
-              }}
-              onBlur={(e) => {
-                e.target.style.outline = "none";
-                e.target.style.boxShadow = "none";
-              }}
-              onClick={() => setShowForm(true)}
-            >
-              Daftar
-            </button>
+            <h1 style={{ fontWeight: "bold", fontSize: "2rem", marginBottom: "1.2rem" }}>Mentorship</h1>
+            <h2 style={{ fontWeight: "bold", fontSize: "1.5rem", marginBottom: "1.2rem" }}>{mentorship.title}</h2>
+            <div style={{ marginBottom: "2rem", fontSize: "1.1rem", color: "#444", lineHeight: 1.7, whiteSpace: "pre-line" }}>{mentorship.description}</div>
+            {/* If registered, show registration data and WhatsApp button */}
+            {registration ? (
+              <div style={{ marginBottom: 24, background: "#f6fef8", border: "1.5px solid #22c55e", borderRadius: 10, padding: 20, maxWidth: 520 }}>
+                <div style={{ fontWeight: 600, fontSize: 17, marginBottom: 10 }}>Your Registration Data</div>
+                <div style={{ marginBottom: 6 }}><b>Name:</b> {registration.name}</div>
+                <div style={{ marginBottom: 6 }}><b>Email:</b> {registration.email}</div>
+                <div style={{ marginBottom: 6 }}><b>Phone:</b> {registration.phone_number}</div>
+                <div style={{ marginBottom: 6 }}><b>Occupation:</b> {registration.occupation}</div>
+                <div style={{ marginBottom: 6 }}><b>Address:</b> {registration.address}</div>
+                <a
+                  href={mentorship.mentorship_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "inline-block",
+                    marginTop: 18,
+                    background: "#27ae60",
+                    color: "#fff",
+                    fontWeight: 700,
+                    fontSize: "1.15rem",
+                    borderRadius: 8,
+                    padding: "0.9rem 2.5rem",
+                    textDecoration: "none",
+                    boxShadow: "0 2px 8px rgba(76,175,80,0.08)",
+                    letterSpacing: 0.5,
+                    transition: "background 0.18s",
+                    textAlign: "center"
+                  }}
+                >
+                  Join WhatsApp Group
+                </a>
+              </div>
+            ) : (
+              <>
+                {!showWhatsapp && (
+                  <Button
+                    type="primary"
+                    style={{ background: "#27ae60", border: "none", borderRadius: 8, fontWeight: 600, fontSize: 16, padding: "10px 32px", height: 44, marginBottom: 18 }}
+                    onClick={() => setShowForm((v) => !v)}
+                  >
+                    {showForm ? "Tutup Form" : "Register"}
+                  </Button>
+                )}
+                {showWhatsapp && (
+                  <a
+                    href={mentorship.mentorship_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: "inline-block",
+                      marginTop: 18,
+                      background: "#27ae60",
+                      color: "#fff",
+                      fontWeight: 700,
+                      fontSize: "1.15rem",
+                      borderRadius: 8,
+                      padding: "0.9rem 2.5rem",
+                      textDecoration: "none",
+                      boxShadow: "0 2px 8px rgba(76,175,80,0.08)",
+                      letterSpacing: 0.5,
+                      transition: "background 0.18s",
+                      textAlign: "center"
+                    }}
+                  >
+                    Join WhatsApp Group
+                  </a>
+                )}
+              </>
+            )}
           </div>
           <img
-            src={mentorship.image}
+            src={mentorship.image_url}
             alt={mentorship.title}
             style={{
               width: 320,
-              height: 260,
+              height: 460,
               objectFit: "cover",
               borderRadius: 16,
               marginTop: 18,
+              boxShadow: "0 2px 12px rgba(0,0,0,0.10)",
             }}
           />
         </div>
-        {showForm && (
-          <form
-            onSubmit={handleSubmit}
-            style={{
-              marginTop: "2.5rem",
-              fontFamily: "Poppins, sans-serif",
-              width: "100%",
-              maxWidth: "none",
-              marginLeft: 0,
-              marginRight: 0,
-            }}
-          >
-            <div
+        {/* Form horizontal Ant Design */}
+        {!registration && showForm && !showWhatsapp && (
+          <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+            <Form
+              form={form}
+              layout="vertical"
+              onFinish={handleSubmit}
               style={{
-                display: "flex",
-                alignItems: "center",
-                marginBottom: 20,
-              }}
-            >
-              <span style={{ fontSize: 22, marginRight: 8 }}>📝</span>
-              <span style={{ fontWeight: 600, fontSize: 20 }}>Pendaftaran</span>
-            </div>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns:
-                  "minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)",
-                gap: 40,
                 width: "100%",
-                marginBottom: 18,
+                maxWidth: 1100,
+                background: "#fff",
+                borderRadius: 12,
+                padding: "32px 32px 24px 32px",
+                boxShadow: "0 1px 6px 0 rgba(0,0,0,0.04)",
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 0,
               }}
             >
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <label
-                  style={{ fontWeight: 500, fontSize: 14, marginBottom: 5 }}
-                >
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={form.name}
-                  onChange={handleChange}
-                  placeholder="Enter your full name"
-                  style={{
-                    width: "100%",
-                    height: 44,
-                    borderRadius: 10,
-                    fontSize: 16,
-                    padding: "0 13px",
-                    border: "1.5px solid #bbb",
-                    boxSizing: "border-box",
-                    overflow: "visible",
-                    textOverflow: "clip",
-                    outline: "none",
-                  }}
-                  onFocus={(e) =>
-                    (e.target.style.border = "1.5px solid #27ae60")
-                  }
-                  onBlur={(e) => (e.target.style.border = "1.5px solid #bbb")}
-                  required
-                />
-              </div>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <label
-                  style={{ fontWeight: 500, fontSize: 14, marginBottom: 5 }}
-                >
-                  Phone Number
-                </label>
-                <input
-                  type="text"
-                  name="phone"
-                  value={form.phone}
-                  onChange={handleChange}
-                  placeholder="Enter your phone number"
-                  style={{
-                    width: "100%",
-                    height: 44,
-                    borderRadius: 10,
-                    fontSize: 16,
-                    padding: "0 13px",
-                    border: "1.5px solid #bbb",
-                    boxSizing: "border-box",
-                    overflow: "visible",
-                    textOverflow: "clip",
-                    outline: "none",
-                  }}
-                  onFocus={(e) =>
-                    (e.target.style.border = "1.5px solid #27ae60")
-                  }
-                  onBlur={(e) => (e.target.style.border = "1.5px solid #bbb")}
-                  required
-                />
-              </div>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <label
-                  style={{ fontWeight: 500, fontSize: 14, marginBottom: 5 }}
-                >
-                  Occupation
-                </label>
-                <Select
-                  value={form.occupation}
-                  onChange={(value) => setForm({ ...form, occupation: value })}
-                  placeholder="Select your occupation"
-                  style={{ width: "100%", height: 44, fontSize: 16 }}
-                  size="large"
-                  options={[
-                    { value: "Pelajar", label: "Pelajar" },
-                    { value: "Mahasiswa", label: "Mahasiswa" },
-                    { value: "Pekerja", label: "Pekerja" },
-                    { value: "Lainnya", label: "Lainnya" },
-                  ]}
-                  allowClear
-                  required
-                />
-              </div>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <label
-                  style={{ fontWeight: 500, fontSize: 14, marginBottom: 5 }}
-                >
-                  Email
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  placeholder="Enter your email"
-                  style={{
-                    width: "100%",
-                    height: 44,
-                    borderRadius: 10,
-                    fontSize: 16,
-                    padding: "0 13px",
-                    border: "1.5px solid #bbb",
-                    boxSizing: "border-box",
-                    overflow: "visible",
-                    textOverflow: "clip",
-                    outline: "none",
-                  }}
-                  onFocus={(e) =>
-                    (e.target.style.border = "1.5px solid #27ae60")
-                  }
-                  onBlur={(e) => (e.target.style.border = "1.5px solid #bbb")}
-                  required
-                />
-              </div>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <label
-                  style={{ fontWeight: 500, fontSize: 14, marginBottom: 5 }}
-                >
-                  Address
-                </label>
-                <input
-                  type="text"
-                  name="address"
-                  value={form.address}
-                  onChange={handleChange}
-                  placeholder="Enter your address"
-                  style={{
-                    width: "100%",
-                    height: 44,
-                    borderRadius: 10,
-                    fontSize: 16,
-                    padding: "0 13px",
-                    border: "1.5px solid #bbb",
-                    boxSizing: "border-box",
-                    overflow: "visible",
-                    textOverflow: "clip",
-                    outline: "none",
-                  }}
-                  onFocus={(e) =>
-                    (e.target.style.border = "1.5px solid #27ae60")
-                  }
-                  onBlur={(e) => (e.target.style.border = "1.5px solid #bbb")}
-                  required
-                />
-              </div>
-            </div>
-            <div
-              style={{ display: "flex", justifyContent: "flex-end", gap: 16 }}
-            >
-              <button
-                type="button"
-                onClick={handleCancel}
-                style={{
-                  background: "#fff",
-                  color: "#888",
-                  border: "none",
-                  fontWeight: 500,
-                  fontSize: 15,
-                  cursor: "pointer",
-                  marginRight: 8,
-                  outline: "none",
-                  boxShadow: "none",
-                }}
-                onFocus={(e) => {
-                  e.target.style.outline = "none";
-                  e.target.style.boxShadow = "none";
-                }}
-                onBlur={(e) => {
-                  e.target.style.outline = "none";
-                  e.target.style.boxShadow = "none";
-                }}
+              <Form.Item
+                name="name"
+                label="Full Name"
+                rules={[{ required: true, message: "Please enter your full name" }]}
+                style={{ display: "inline-block", width: "24%", minWidth: 200, marginRight: "1%" }}
               >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                style={{
-                  background: "#27ae60",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: 8,
-                  padding: "8px 24px",
-                  fontWeight: 600,
-                  fontSize: "15.5px",
-                  cursor: "pointer",
-                  fontFamily: "Poppins, sans-serif",
-                  transition: "background 0.18s",
-                  outline: "none",
-                  boxShadow: "none",
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.background = "#219150";
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.background = "#27ae60";
-                }}
-                onFocus={(e) => {
-                  e.target.style.outline = "none";
-                  e.target.style.boxShadow = "none";
-                }}
-                onBlur={(e) => {
-                  e.target.style.outline = "none";
-                  e.target.style.boxShadow = "none";
-                }}
+                <Input placeholder="Enter your full name" size="large" />
+              </Form.Item>
+              <Form.Item
+                name="phone_number"
+                label="Phone Number"
+                rules={[{ required: true, message: "Please enter your phone number" }]}
+                style={{ display: "inline-block", width: "24%", minWidth: 200, marginRight: "1%" }}
               >
-                Submit
-              </button>
-            </div>
-          </form>
+                <Input placeholder="Enter your phone number" size="large" />
+              </Form.Item>
+              <Form.Item
+                name="occupation"
+                label="Occupation"
+                rules={[{ required: true, message: "Please select your occupation" }]}
+                style={{ display: "inline-block", width: "24%", minWidth: 200, marginRight: "1%" }}
+              >
+                <Select placeholder="Select your occupation" size="large">
+                  <Select.Option value="Student">Student</Select.Option>
+                  <Select.Option value="Employed">Employed</Select.Option>
+                  <Select.Option value="Unemployed">Unemployed</Select.Option>
+                  <Select.Option value="Looking for a job">Looking for a job</Select.Option>
+                </Select>
+              </Form.Item>
+              <Form.Item
+                name="email"
+                label="Email"
+                rules={[{ required: true, type: "email", message: "Please enter a valid email" }]}
+                style={{ display: "inline-block", width: "24%", minWidth: 200 }}
+              >
+                <Input placeholder="Enter your email" size="large" />
+              </Form.Item>
+              <Form.Item
+                name="address"
+                label="Address"
+                rules={[{ required: true, message: "Please enter your address" }]}
+                style={{ width: "100%", marginTop: 8 }}
+              >
+                <Input placeholder="Enter your address" size="large" />
+              </Form.Item>
+              <div style={{ width: "100%", display: "flex", justifyContent: "flex-end", gap: 12, alignItems: "center", marginTop: 8 }}>
+                <Button onClick={handleCancel} style={{ background: "#fff", color: "#888", border: "1px solid #bbb", borderRadius: 8, fontWeight: 500, fontSize: 15, padding: "9px 24px" }}>Cancel</Button>
+                <Button type="primary" htmlType="submit" loading={submitting} style={{ background: "#27ae60", border: "none", borderRadius: 8, fontWeight: 600, fontSize: 15, padding: "9px 32px" }}>Submit</Button>
+              </div>
+            </Form>
+          </div>
         )}
       </div>
     </div>

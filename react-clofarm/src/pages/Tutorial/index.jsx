@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { SearchOutlined } from "@ant-design/icons";
-import cardImg from "../../assets/images/dumpict.jpg";
+import cardImg from "../../assets/images/seed.jpg";
 import { useNavigate } from "react-router-dom";
 
 // --- Komponen Kartu Tutorial ---
@@ -135,6 +135,61 @@ export default function TutorialPage() {
     );
   }
 
+  const cardStyle = {
+    background: "#fff",
+    border: "1px solid #e5e7eb",
+    borderRadius: 12,
+    boxShadow: "0 1px 3px 0 rgba(0,0,0,0.05)",
+    width: "100%",
+    minHeight: 320,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    padding: "0 0 18px 0"
+  };
+  const imgStyle = {
+    width: "90%",
+    height: 160,
+    margin: "16px auto 0 auto",
+    display: "block",
+    objectFit: "cover",
+    borderRadius: 8,
+    background: "#e5e7eb"
+  };
+  const titleStyle = {
+    fontWeight: 700,
+    fontSize: 19,
+    margin: "16px 0 8px 0",
+    color: "#111827",
+    textAlign: "left"
+  };
+  const descStyle = {
+    color: "#6b7280",
+    fontSize: 16,
+    marginBottom: 18,
+    fontFamily: "Poppins, sans-serif",
+    lineHeight: 1.5,
+    textAlign: "left"
+  };
+  const btnStyle = {
+    background: "#27ae60",
+    color: "#fff",
+    border: "none",
+    borderRadius: 8,
+    padding: "10px 0",
+    fontWeight: 600,
+    fontSize: "16.5px",
+    cursor: "pointer",
+    width: "90%",
+    fontFamily: "Poppins, sans-serif",
+    marginTop: "auto",
+    transition: "background 0.18s",
+    textAlign: "center",
+    textDecoration: "none",
+    display: "block"
+  };
+
   return (
     <div style={{ background: "#f9fafb", minHeight: "100vh", width: "100%" }}>
       <div
@@ -207,75 +262,90 @@ export default function TutorialPage() {
             }}
           />
         </div>
-        <div style={{ ...styles.cardGrid, marginTop: 10 }}>
-          {/* Card Dummy selalu muncul di awal */}
-          <div
-            style={{
-              ...styles.card,
-              cursor: "pointer",
-              border: "1px solid #e5e7eb",
-              maxWidth: 310,
-              height: 340,
-              transition: "box-shadow 0.18s, border-color 0.18s",
-            }}
-            onClick={() => navigate("/tutorial/1")}
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") navigate("/tutorial/1");
-            }}
-          >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            gap: 64,
+            marginBottom: 0
+          }}
+        >
+          {/* Stepper section here (map for steps 1-4) */}
+          <div style={{ ...styles.cardGrid, marginTop: 10 }}>
+            {/* Card Dummy selalu muncul di awal */}
             <div
               style={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "center",
+                ...styles.card,
+                cursor: "pointer",
+                border: "1px solid #e5e7eb",
+                maxWidth: 310,
+                height: 340,
+                transition: "box-shadow 0.18s, border-color 0.18s",
+              }}
+              onClick={() => navigate("/tutorial/1")}
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") navigate("/tutorial/1");
               }}
             >
-              <img
-                src={cardImg}
-                alt="Dummy Tutorial"
-                style={{
-                  width: "90%",
-                  height: "160px",
-                  margin: "16px auto 0 auto",
-                  display: "block",
-                  objectFit: "cover",
-                  borderRadius: "8px",
-                  background: "#f0f0f0",
-                }}
-              />
-            </div>
-            <div style={styles.cardContent}>
-              <h3 style={styles.cardTitle}>Seeding Stage</h3>
-              <p style={styles.cardDescription}>
-                Seed preparation and germination steps.
-              </p>
-            </div>
-            <div style={{ padding: "0 12px 12px 12px" }}>
-              <span
+              <div
                 style={{
                   width: "100%",
-                  display: "block",
-                  background: "#27ae60",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "6px",
-                  padding: "5px 0",
-                  fontWeight: "bold",
-                  textAlign: "center",
-                  textDecoration: "none",
-                  fontSize: "1.05rem",
-                  transition: "background 0.2s, color 0.2s",
+                  display: "flex",
+                  justifyContent: "center",
                 }}
               >
-                See Tutorial
-              </span>
+                <img
+                  src={cardImg}
+                  alt="Dummy Tutorial"
+                  style={{
+                    width: "90%",
+                    height: "160px",
+                    margin: "16px auto 0 auto",
+                    display: "block",
+                    objectFit: "cover",
+                    borderRadius: "8px",
+                    background: "#f0f0f0",
+                  }}
+                />
+              </div>
+              <div style={styles.cardContent}>
+                <h3 style={styles.cardTitle}>Seeding Stage</h3>
+                <p style={styles.cardDescription}>
+                  Seed preparation and germination steps.
+                </p>
+              </div>
+              <div style={{ padding: "0 12px 12px 12px" }}>
+                <span
+                  style={{
+                    width: "100%",
+                    display: "block",
+                    background: "#27ae60",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "6px",
+                    padding: "5px 0",
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    textDecoration: "none",
+                    fontSize: "1.05rem",
+                    transition: "background 0.2s, color 0.2s",
+                  }}
+                >
+                  See Tutorial
+                </span>
+              </div>
             </div>
+            {/* Card tutorial asli */}
+            {filteredTutorials.map((tutorial) => (
+              <div key={tutorial.id_tutorials} style={cardStyle}>
+                <img src={tutorial.thumbnail_url || cardImg} alt={tutorial.title} style={imgStyle} />
+                <div style={titleStyle}>{tutorial.title}</div>
+                <div style={descStyle}>{tutorial.description}</div>
+                <a href={tutorial.tutorial_url} target="_blank" rel="noopener noreferrer" style={btnStyle}>See Tutorial</a>
+              </div>
+            ))}
           </div>
-          {/* Card tutorial asli */}
-          {filteredTutorials.map((tutorial) => (
-            <TutorialCard key={tutorial.id_tutorials} {...tutorial} />
-          ))}
         </div>
       </div>
     </div>
@@ -392,11 +462,13 @@ const styles = {
     fontWeight: 600,
     color: "#222",
     fontFamily: '"Poppins", sans-serif',
+    textAlign: "left"
   },
   cardDescription: {
     margin: 0,
     fontSize: 16,
     color: "#888",
     fontFamily: '"Poppins", sans-serif',
+    textAlign: "left"
   },
 };
