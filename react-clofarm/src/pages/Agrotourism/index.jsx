@@ -9,10 +9,8 @@ import {
 } from "@ant-design/icons";
 import dumpict from "../../assets/images/dumpict.jpg";
 import { notification, Dropdown, Menu, Popconfirm } from "antd";
-import { useUser } from '../../components/UserContext';
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
-
-
+import { useUser } from "../../components/UserContext";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 const initialDummyReviews = [
   {
@@ -72,8 +70,10 @@ const styles = {
     height: "48px",
     boxShadow: "none",
     transition: "border-color 0.2s, box-shadow 0.2s",
-    maxWidth: 1285,
+    maxWidth: "100%", // perbaiki: pastikan 100%
     width: "100%",
+    boxSizing: "border-box", // tambahkan agar tidak overflow
+    overflow: "hidden", // tambahkan agar tidak overflow
   },
   searchWrapperHover: {
     border: `2px solid #27ae60`,
@@ -146,7 +146,14 @@ const styles = {
 };
 
 // Komponen Card
-const AgrotourismCard = ({ image_url, name, city, province, ticket_price, onSeeDetails }) => (
+const AgrotourismCard = ({
+  image_url,
+  name,
+  city,
+  province,
+  ticket_price,
+  onSeeDetails,
+}) => (
   <div style={styles.card}>
     <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
       <img
@@ -189,14 +196,20 @@ const AgrotourismCard = ({ image_url, name, city, province, ticket_price, onSeeD
           fontSize: "1.05rem",
           transition: "background 0.2s, color 0.2s",
           cursor: "pointer",
+          outline: "none", // tambahkan ini
         }}
-        onMouseEnter={e => {
+        tabIndex={0}
+        onMouseEnter={(e) => {
           e.target.style.background = "#219150";
           e.target.style.color = "#fff";
         }}
-        onMouseLeave={e => {
+        onMouseLeave={(e) => {
           e.target.style.background = "#27ae60";
           e.target.style.color = "#fff";
+        }}
+        onFocus={(e) => {
+          e.target.style.outline = "none"; // hilangkan outline hitam saat focus/click
+          e.target.style.boxShadow = "none"; // hilangkan shadow biru browser
         }}
       >
         See Details
@@ -250,10 +263,13 @@ const MainCard = ({ children }) => (
 
 // Helper untuk fetch user profile by id
 async function fetchUserProfile(id_user) {
-  const token = localStorage.getItem('token');
-  const res = await fetch(`http://localhost:5000/auth/profile?id_user=${id_user}`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
+  const token = localStorage.getItem("token");
+  const res = await fetch(
+    `http://localhost:5000/auth/profile?id_user=${id_user}`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
   if (!res.ok) return null;
   return await res.json();
 }
@@ -266,7 +282,7 @@ function ReviewCard({
   isOwn,
   onDelete,
   onEdit,
-  userProfiles
+  userProfiles,
 }) {
   const cProfile = userProfiles[id_user] || {};
   return (
@@ -330,18 +346,29 @@ function ReviewCard({
           }}
         >
           <img
-            src={cProfile.photo_url || "https://api.dicebear.com/7.x/adventurer-neutral/svg?seed=User"}
+            src={
+              cProfile.photo_url ||
+              "https://api.dicebear.com/7.x/adventurer-neutral/svg?seed=User"
+            }
             alt={cProfile.name || cProfile.username || "User"}
             style={{
               width: 32,
               height: 32,
               borderRadius: "50%",
               background: "#eee",
-              objectFit: "cover"
+              objectFit: "cover",
             }}
           />
-          <span style={{ fontWeight: 500 }}>{cProfile.name || `User #${id_user}`}
-            <span style={{ color: '#888', fontWeight: 400, fontSize: 13, marginLeft: 6 }}>
+          <span style={{ fontWeight: 500 }}>
+            {cProfile.name || `User #${id_user}`}
+            <span
+              style={{
+                color: "#888",
+                fontWeight: 400,
+                fontSize: 13,
+                marginLeft: 6,
+              }}
+            >
               @{cProfile.username || id_user}
             </span>
           </span>
@@ -418,13 +445,16 @@ function AgrotourismDetail() {
         setLoading(true);
         const token = localStorage.getItem("token");
         if (!token) throw new Error("Token not found. Please login again.");
-        const response = await fetch(`http://localhost:5000/agrotourism/${id}`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `http://localhost:5000/agrotourism/${id}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
         if (!response.ok) {
           const errData = await response.json();
           throw new Error(errData.msg || "Failed to fetch agrotourism detail");
@@ -473,7 +503,9 @@ function AgrotourismDetail() {
   // Fetch user profiles for reviews
   React.useEffect(() => {
     async function fetchProfiles() {
-      const ids = Array.from(new Set(reviews.map(r => r.id_user).filter(Boolean)));
+      const ids = Array.from(
+        new Set(reviews.map((r) => r.id_user).filter(Boolean))
+      );
       const profiles = {};
       for (const id of ids) {
         if (!userProfiles[id]) {
@@ -481,7 +513,7 @@ function AgrotourismDetail() {
           if (profile) profiles[id] = profile;
         }
       }
-      setUserProfiles(prev => ({ ...prev, ...profiles }));
+      setUserProfiles((prev) => ({ ...prev, ...profiles }));
     }
     if (reviews.length) fetchProfiles();
     // eslint-disable-next-line
@@ -490,7 +522,16 @@ function AgrotourismDetail() {
   if (loading) {
     return (
       <MainCard>
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "50vh", fontSize: 18, color: "#666" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "50vh",
+            fontSize: 18,
+            color: "#666",
+          }}
+        >
           Loading agrotourism detail...
         </div>
       </MainCard>
@@ -499,7 +540,9 @@ function AgrotourismDetail() {
   if (error || !data) {
     return (
       <MainCard>
-        <div style={{ color: "#e74c3c", fontSize: 18 }}>{error || "Agrotourism not found."}</div>
+        <div style={{ color: "#e74c3c", fontSize: 18 }}>
+          {error || "Agrotourism not found."}
+        </div>
       </MainCard>
     );
   }
@@ -528,13 +571,16 @@ function AgrotourismDetail() {
       let res;
       if (editReviewId) {
         // Edit review
-        res = await fetch(`http://localhost:5000/agrotourism_reviews/${editReviewId}`, {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        });
+        res = await fetch(
+          `http://localhost:5000/agrotourism_reviews/${editReviewId}`,
+          {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+          }
+        );
         if (!res.ok) throw new Error("Failed to update review");
         notification.success({ message: "Review updated successfully!" });
       } else {
@@ -563,12 +609,15 @@ function AgrotourismDetail() {
   const handleDeleteReview = async (id_agrowisata_reviews) => {
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`http://localhost:5000/agrotourism_reviews/${id_agrowisata_reviews}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await fetch(
+        `http://localhost:5000/agrotourism_reviews/${id_agrowisata_reviews}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       if (!res.ok) throw new Error("Failed to delete review");
       notification.success({ message: "Review deleted!" });
       if (editReviewId === id_agrowisata_reviews) {
@@ -605,7 +654,14 @@ function AgrotourismDetail() {
           <h2 style={{ fontSize: "1.5rem", fontWeight: 700, marginBottom: 10 }}>
             {data.name}
           </h2>
-          <div style={{ color: "#222", fontSize: 16, marginBottom: 18, textAlign: "justify" }}>
+          <div
+            style={{
+              color: "#222",
+              fontSize: 16,
+              marginBottom: 18,
+              textAlign: "justify",
+            }}
+          >
             <div>{data.description}</div>
           </div>
           <div
@@ -662,8 +718,8 @@ function AgrotourismDetail() {
                 transition: "background 0.2s",
                 display: "inline-block",
               }}
-              onMouseEnter={e => (e.target.style.background = "#219150")}
-              onMouseLeave={e => (e.target.style.background = "#27ae60")}
+              onMouseEnter={(e) => (e.target.style.background = "#219150")}
+              onMouseLeave={(e) => (e.target.style.background = "#27ae60")}
             >
               VISIT
             </a>
@@ -743,7 +799,10 @@ function AgrotourismDetail() {
           }}
         >
           <img
-            src={user?.photo_url || "https://api.dicebear.com/7.x/adventurer-neutral/svg?seed=User"}
+            src={
+              user?.photo_url ||
+              "https://api.dicebear.com/7.x/adventurer-neutral/svg?seed=User"
+            }
             alt="profile"
             style={{
               width: 38,
@@ -752,7 +811,10 @@ function AgrotourismDetail() {
               objectFit: "cover",
             }}
           />
-          <span style={{ fontWeight: 500 }}> {user?.name || user?.username || "User"} </span>
+          <span style={{ fontWeight: 500 }}>
+            {" "}
+            {user?.name || user?.username || "User"}{" "}
+          </span>
         </div>
         <StarRating value={rating} onChange={setRating} />
         <textarea
@@ -899,7 +961,7 @@ function AgrotourismDetail() {
         </div>
       </form>
       {/* Lottie animation if no reviews */}
-      {(!loadingReviews && reviews.length === 0) && (
+      {!loadingReviews && reviews.length === 0 && (
         <div style={{ width: 320, margin: "0 auto 16px auto" }}>
           <DotLottieReact
             src="https://lottie.host/your-animation-url.lottie"
@@ -913,7 +975,9 @@ function AgrotourismDetail() {
         {loadingReviews ? (
           <div>Loading reviews...</div>
         ) : reviews.length === 0 ? (
-          <div style={{ color: "#888", textAlign: "center" }}>No reviews yet.</div>
+          <div style={{ color: "#888", textAlign: "center" }}>
+            No reviews yet.
+          </div>
         ) : (
           reviews.map((r) => (
             <ReviewCard
@@ -978,7 +1042,16 @@ function AgrotourismList() {
   if (loading) {
     return (
       <MainCard>
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "50vh", fontSize: 18, color: "#666" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "50vh",
+            fontSize: 18,
+            color: "#666",
+          }}
+        >
           Loading agrotourism...
         </div>
       </MainCard>
@@ -987,7 +1060,16 @@ function AgrotourismList() {
   if (error) {
     return (
       <MainCard>
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "50vh", fontSize: 18, color: "#e74c3c" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "50vh",
+            fontSize: 18,
+            color: "#e74c3c",
+          }}
+        >
           Error: {error}
         </div>
       </MainCard>

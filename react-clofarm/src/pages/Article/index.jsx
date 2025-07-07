@@ -20,7 +20,7 @@ const ArticleCard = ({ image_url, title, description, article_url }) => (
   >
     <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
       <img
-        src={image_url || require('../../assets/images/dumpict.jpg')}
+        src={image_url || require("../../assets/images/dumpict.jpg")}
         alt={title}
         style={{
           width: "90%",
@@ -102,24 +102,24 @@ const Article = () => {
       try {
         setLoading(true);
         // Get token from localStorage
-        const token = localStorage.getItem('token');
-        
-        const response = await fetch('http://localhost:5000/articles', {
-          method: 'GET',
+        const token = localStorage.getItem("token");
+
+        const response = await fetch("http://localhost:5000/articles", {
+          method: "GET",
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
         });
 
         if (!response.ok) {
-          throw new Error('Failed to fetch articles');
+          throw new Error("Failed to fetch articles");
         }
 
         const data = await response.json();
         setArticles(data);
       } catch (err) {
-        console.error('Error fetching articles:', err);
+        console.error("Error fetching articles:", err);
         setError(err.message);
         // Fallback to dummy data if API fails
         setArticles([
@@ -161,21 +161,24 @@ const Article = () => {
   }, []);
 
   // Filter articles based on search term
-  const filteredArticles = articles.filter(article =>
-    article.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    article.description?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredArticles = articles.filter(
+    (article) =>
+      article.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      article.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (loading) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '50vh',
-        fontSize: '18px',
-        color: '#666'
-      }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "50vh",
+          fontSize: "18px",
+          color: "#666",
+        }}
+      >
         Loading articles...
       </div>
     );
@@ -183,14 +186,16 @@ const Article = () => {
 
   if (error) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '50vh',
-        fontSize: '18px',
-        color: '#e74c3c'
-      }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "50vh",
+          fontSize: "18px",
+          color: "#e74c3c",
+        }}
+      >
         Error: {error}
       </div>
     );
@@ -239,8 +244,10 @@ const Article = () => {
             marginBottom: "30px",
             boxShadow: searchHover ? "0 0 0 2px #bfe4ce" : "none",
             transition: "border-color 0.2s, box-shadow 0.2s",
-            maxWidth: 1270,
+            maxWidth: "100%", // perbaiki: pastikan 100%
             width: "100%",
+            boxSizing: "border-box", // tambahkan agar tidak overflow
+            overflow: "hidden", // tambahkan agar tidak overflow
           }}
           onMouseEnter={() => setSearchHover(true)}
           onMouseLeave={() => setSearchHover(false)}

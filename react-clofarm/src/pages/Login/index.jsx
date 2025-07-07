@@ -11,7 +11,7 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  
+
   const isValid = username.trim() !== "" && password.trim() !== "";
 
   const handleSubmit = async (e) => {
@@ -23,28 +23,28 @@ function Login() {
       setError("");
 
       const formData = new FormData();
-      formData.append('username', username);
-      formData.append('password', password);
+      formData.append("username", username);
+      formData.append("password", password);
 
-      const response = await fetch('http://localhost:5000/auth/login', {
-        method: 'POST',
+      const response = await fetch("http://localhost:5000/auth/login", {
+        method: "POST",
         body: formData,
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.msg || 'Login failed');
+        throw new Error(data.msg || "Login failed");
       }
 
       // Save token to localStorage
-      localStorage.setItem('token', data.access_token);
-      
+      localStorage.setItem("token", data.access_token);
+
       // Redirect to home page
-      navigate('/home');
+      navigate("/home");
     } catch (err) {
-      console.error('Login error:', err);
-      setError(err.message || 'Login failed. Please try again.');
+      console.error("Login error:", err);
+      setError(err.message || "Login failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -56,12 +56,14 @@ function Login() {
         <form className="login-form" onSubmit={handleSubmit}>
           <div className="login-title">Log in</div>
           {error && (
-            <div style={{ 
-              color: '#e74c3c', 
-              fontSize: '14px', 
-              marginBottom: '16px',
-              textAlign: 'center'
-            }}>
+            <div
+              style={{
+                color: "#e74c3c",
+                fontSize: "14px",
+                marginBottom: "16px",
+                textAlign: "center",
+              }}
+            >
               {error}
             </div>
           )}
@@ -111,9 +113,9 @@ function Login() {
             </div>
           </div>
           <div className="login-forgot">
-            <a href="#" className="forgot-link">
+            <Link to="/forgot-password" className="forgot-link">
               Forgot Password?
-            </a>
+            </Link>
           </div>
           <button
             type="submit"

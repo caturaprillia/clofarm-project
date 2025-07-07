@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import cardImg from "../../assets/images/dumpict.jpg";
+import { useNavigate } from "react-router-dom";
 
 // --- Komponen Kartu Tutorial ---
 const TutorialCard = ({ thumbnail_url, title, description, tutorial_url }) => (
@@ -36,23 +37,23 @@ const TutorialCard = ({ thumbnail_url, title, description, tutorial_url }) => (
           color: "#fff",
           border: "none",
           borderRadius: "6px",
-          padding: "5px 0",
+          padding: "7px 0",
           fontWeight: "bold",
           textAlign: "center",
           textDecoration: "none",
           fontSize: "1.05rem",
           transition: "background 0.2s, color 0.2s",
         }}
-        onMouseEnter={e => {
+        onMouseEnter={(e) => {
           e.target.style.background = "#219150";
           e.target.style.color = "#fff";
         }}
-        onMouseLeave={e => {
+        onMouseLeave={(e) => {
           e.target.style.background = "#27ae60";
           e.target.style.color = "#fff";
         }}
       >
-        Lihat Tutorial
+        See Tutorial
       </a>
     </div>
   </div>
@@ -64,6 +65,7 @@ export default function TutorialPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTutorials = async () => {
@@ -94,21 +96,40 @@ export default function TutorialPage() {
     fetchTutorials();
   }, []);
 
-  const filteredTutorials = tutorials.filter(tutorial =>
-    tutorial.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    tutorial.description?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredTutorials = tutorials.filter(
+    (tutorial) =>
+      tutorial.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      tutorial.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (loading) {
     return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "50vh", fontSize: 18, color: "#666" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "50vh",
+          fontSize: 18,
+          color: "#666",
+        }}
+      >
         Loading tutorials...
       </div>
     );
   }
   if (error) {
     return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "50vh", fontSize: 18, color: "#e74c3c" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "50vh",
+          fontSize: 18,
+          color: "#e74c3c",
+        }}
+      >
         Error: {error}
       </div>
     );
@@ -142,14 +163,16 @@ export default function TutorialPage() {
             display: "flex",
             alignItems: "center",
             background: "#fff",
-            border: `2px solid ${searchHover ? "#27ae60" : "#d1d5db"}`,
-            borderRadius: "8px",
+            border: searchHover ? "1px solid #27ae60" : "1px solid #e5e7eb", // hover: hijau, normal: abu
+            borderRadius: "12px",
             padding: "0 16px",
             height: "48px",
             marginBottom: 32,
-            maxWidth: 1275,
+            maxWidth: "100%",
             width: "100%",
-            boxShadow: searchHover ? "0 0 0 2px #bfe4ce" : "none",
+            boxSizing: "border-box",
+            overflow: "hidden",
+            boxShadow: searchHover ? "0 0 0 2px #bfe4ce" : "none", // hover: glow/blur, normal: none
             transition: "border-color 0.2s, box-shadow 0.2s",
           }}
           onMouseEnter={() => setSearchHover(true)}
@@ -167,7 +190,7 @@ export default function TutorialPage() {
             type="text"
             placeholder="Search..."
             value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
+            onChange={(e) => setSearchTerm(e.target.value)}
             style={{
               width: "100%",
               height: "100%",
@@ -177,10 +200,79 @@ export default function TutorialPage() {
               outline: "none",
               background: "transparent",
               margin: 0,
+              display: "flex",
+              alignItems: "center",
+              lineHeight: 1,
+              boxShadow: "none",
             }}
           />
         </div>
         <div style={{ ...styles.cardGrid, marginTop: 10 }}>
+          {/* Card Dummy selalu muncul di awal */}
+          <div
+            style={{
+              ...styles.card,
+              cursor: "pointer",
+              border: "1px solid #e5e7eb",
+              maxWidth: 310,
+              height: 340,
+              transition: "box-shadow 0.18s, border-color 0.18s",
+            }}
+            onClick={() => navigate("/tutorial/1")}
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") navigate("/tutorial/1");
+            }}
+          >
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <img
+                src={cardImg}
+                alt="Dummy Tutorial"
+                style={{
+                  width: "90%",
+                  height: "160px",
+                  margin: "16px auto 0 auto",
+                  display: "block",
+                  objectFit: "cover",
+                  borderRadius: "8px",
+                  background: "#f0f0f0",
+                }}
+              />
+            </div>
+            <div style={styles.cardContent}>
+              <h3 style={styles.cardTitle}>Seeding Stage</h3>
+              <p style={styles.cardDescription}>
+                Seed preparation and germination steps.
+              </p>
+            </div>
+            <div style={{ padding: "0 12px 12px 12px" }}>
+              <span
+                style={{
+                  width: "100%",
+                  display: "block",
+                  background: "#27ae60",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "6px",
+                  padding: "5px 0",
+                  fontWeight: "bold",
+                  textAlign: "center",
+                  textDecoration: "none",
+                  fontSize: "1.05rem",
+                  transition: "background 0.2s, color 0.2s",
+                }}
+              >
+                See Tutorial
+              </span>
+            </div>
+          </div>
+          {/* Card tutorial asli */}
           {filteredTutorials.map((tutorial) => (
             <TutorialCard key={tutorial.id_tutorials} {...tutorial} />
           ))}

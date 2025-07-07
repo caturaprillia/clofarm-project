@@ -1,5 +1,19 @@
 import React, { useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
+
+// HILANGKAN BORDER INPUT SECARA GLOBAL DI FILE INI
+const style = document.createElement("style");
+style.innerHTML = `
+  input[type="text"]:focus,
+  input[type="text"]:active,
+  input[type="text"]:hover {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+`;
+document.head.appendChild(style);
 
 const mentorships = [
   {
@@ -37,6 +51,7 @@ export default function Mentorship() {
   const [search, setSearch] = useState("");
   const [expandedCard, setExpandedCard] = useState(null);
   const [searchHover, setSearchHover] = useState(false);
+  const navigate = useNavigate();
 
   const filteredMentorships = mentorships.filter((m) =>
     m.title.toLowerCase().includes(search.toLowerCase())
@@ -77,8 +92,10 @@ export default function Mentorship() {
             padding: "0 16px",
             height: "48px",
             margin: "0 0 32px 0",
-            maxWidth: 1275,
+            maxWidth: "100%", // perbaiki di sini
             width: "100%",
+            boxSizing: "border-box", // tambahkan ini
+            overflow: "hidden", // tambahkan ini
             boxShadow: searchHover ? "0 0 0 2px #bfe4ce" : "none",
             transition: "border-color 0.2s, box-shadow 0.2s",
           }}
@@ -109,9 +126,20 @@ export default function Mentorship() {
               alignItems: "center",
               lineHeight: 1,
               boxShadow: "none",
+              caretColor: "#27ae60",
             }}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            onFocus={(e) => {
+              e.target.style.outline = "none";
+              e.target.style.boxShadow = "none";
+              e.target.style.border = "none";
+            }}
+            onBlur={(e) => {
+              e.target.style.outline = "none";
+              e.target.style.boxShadow = "none";
+              e.target.style.border = "none";
+            }}
           />
         </div>
         <div
@@ -241,6 +269,7 @@ export default function Mentorship() {
                       fontFamily: "Poppins, sans-serif",
                       marginTop: "auto",
                       transition: "background 0.18s",
+                      outline: "none", // hilangkan outline default
                     }}
                     onMouseEnter={(e) => {
                       e.target.style.background = "#219150";
@@ -248,8 +277,16 @@ export default function Mentorship() {
                     onMouseLeave={(e) => {
                       e.target.style.background = "#27ae60";
                     }}
+                    onFocus={(e) => {
+                      e.target.style.outline = "none"; // hilangkan outline hitam saat focus/click
+                      e.target.style.boxShadow = "none";
+                    }}
+                    onMouseDown={(e) => {
+                      e.preventDefault(); // cegah border browser saat klik
+                    }}
+                    onClick={() => navigate(`/mentorship/${m.id}`)}
                   >
-                    Lihat Program
+                    See Detail
                   </button>
                 </div>
               </div>
