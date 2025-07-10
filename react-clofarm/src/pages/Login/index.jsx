@@ -68,7 +68,9 @@ function Login() {
             </div>
           )}
           <div className="form-group">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="username">
+              <span style={{ color: "red", marginRight: 4 }}>*</span>Username
+            </label>
             <input
               type="text"
               id="username"
@@ -81,7 +83,9 @@ function Login() {
             />
           </div>
           <div className="form-group password-group">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">
+              <span style={{ color: "red", marginRight: 4 }}>*</span>Password
+            </label>
             <div className="input-password-wrapper">
               <input
                 type={showPassword ? "text" : "password"}

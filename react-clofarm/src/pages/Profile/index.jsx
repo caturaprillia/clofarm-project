@@ -97,25 +97,25 @@ const Profile = () => {
   return (
     <>
       <style>{`
-        .ant-input, .ant-input:focus, .ant-input-focused, .ant-input:hover, .ant-input:active, .ant-input:focus-visible {
+        .profile-input input.ant-input {
+          border: 1.5px solid #d9d9d9 !important;
+          background: #fff !important;
+          color: #222 !important;
+          border-radius: 8px !important;
           font-size: 16px !important;
           padding: 10px 16px !important;
-          border-width: 2px !important;
-          border-style: solid !important;
-          border-color: #d9d9d9 !important;
-          border-radius: 8px !important;
-          box-sizing: border-box !important;
-          outline: none !important;
-          box-shadow: none !important;
-          background: #fff !important;
+          min-height: 40px !important;
           transition: border-color 0.2s;
-        }
-        .ant-input:hover, .ant-input:focus, .ant-input-focused, .ant-input:active, .ant-input:focus-visible {
-          border-color: #27ae60 !important;
-          border-width: 2px !important;
-          border-style: solid !important;
           box-shadow: none !important;
           outline: none !important;
+          display: block !important;
+        }
+        .profile-input input.ant-input:focus,
+        .profile-input input.ant-input:hover,
+        .profile-input input.ant-input.ant-input-focused {
+          border: 1.5px solid #27ae60 !important;
+          outline: none !important;
+          box-shadow: none !important;
         }
       `}</style>
       <div
@@ -175,6 +175,7 @@ const Profile = () => {
           onFinish={handleFinish}
         >
           <Form.Item
+            className="profile-input"
             label={<span style={{ fontWeight: 500 }}>Full Name</span>}
             name="name"
             style={{ marginBottom: 12 }}
@@ -183,6 +184,7 @@ const Profile = () => {
             <Input size="large" placeholder="Enter your full name" />
           </Form.Item>
           <Form.Item
+            className="profile-input"
             label={<span style={{ fontWeight: 500 }}>Username</span>}
             name="username"
             style={{ marginBottom: 12 }}
@@ -190,6 +192,7 @@ const Profile = () => {
             <Input size="large" disabled placeholder="Your username" />
           </Form.Item>
           <Form.Item
+            className="profile-input"
             label={<span style={{ fontWeight: 500 }}>Phone Number</span>}
             name="phone"
             style={{ marginBottom: 12 }}
@@ -197,6 +200,7 @@ const Profile = () => {
             <Input size="large" placeholder="Enter your WhatsApp number" />
           </Form.Item>
           <Form.Item
+            className="profile-input"
             label={<span style={{ fontWeight: 500 }}>Image URL</span>}
             name="photo_url"
             style={{ marginBottom: 18 }}

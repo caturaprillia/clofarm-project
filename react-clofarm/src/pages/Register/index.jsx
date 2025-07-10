@@ -15,7 +15,8 @@ function Register() {
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
 
-  const isValid = username.trim() && name.trim() && phone.trim() && password.trim();
+  const isValid =
+    username.trim() && name.trim() && phone.trim() && password.trim();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -54,13 +55,33 @@ function Register() {
         <form className="register-form" onSubmit={handleSubmit}>
           <div className="register-title">Register</div>
           {error && (
-            <div style={{ color: "#e74c3c", fontSize: 14, marginBottom: 12, textAlign: "center" }}>{error}</div>
+            <div
+              style={{
+                color: "#e74c3c",
+                fontSize: 14,
+                marginBottom: 12,
+                textAlign: "center",
+              }}
+            >
+              {error}
+            </div>
           )}
           {success && (
-            <div style={{ color: "#27ae60", fontSize: 14, marginBottom: 12, textAlign: "center" }}>{success}</div>
+            <div
+              style={{
+                color: "#27ae60",
+                fontSize: 14,
+                marginBottom: 12,
+                textAlign: "center",
+              }}
+            >
+              {success}
+            </div>
           )}
           <div className="form-group">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="username">
+              <span style={{ color: "red", marginRight: 4 }}>*</span>Username
+            </label>
             <input
               type="text"
               id="username"
@@ -73,7 +94,9 @@ function Register() {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="name">Name</label>
+            <label htmlFor="name">
+              <span style={{ color: "red", marginRight: 4 }}>*</span>Name
+            </label>
             <input
               type="text"
               id="name"
@@ -86,7 +109,10 @@ function Register() {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="phone">Phone Number</label>
+            <label htmlFor="phone">
+              <span style={{ color: "red", marginRight: 4 }}>*</span>Phone
+              Number
+            </label>
             <input
               type="text"
               id="phone"
@@ -99,7 +125,9 @@ function Register() {
             />
           </div>
           <div className="form-group password-group">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">
+              <span style={{ color: "red", marginRight: 4 }}>*</span>Password
+            </label>
             <div className="input-password-wrapper">
               <input
                 type={showPassword ? "text" : "password"}
@@ -121,7 +149,9 @@ function Register() {
                 {showPassword ? (
                   <EyeOutlined style={{ fontSize: 22, color: "#888" }} />
                 ) : (
-                  <EyeInvisibleOutlined style={{ fontSize: 22, color: "#888" }} />
+                  <EyeInvisibleOutlined
+                    style={{ fontSize: 22, color: "#888" }}
+                  />
                 )}
               </span>
             </div>

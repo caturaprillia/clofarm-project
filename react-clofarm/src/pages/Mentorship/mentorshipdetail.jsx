@@ -21,15 +21,23 @@ export default function MentorshipDetail() {
         setLoading(true);
         const token = localStorage.getItem("token");
         const [mentRes, regRes] = await Promise.all([
-          fetch(`http://localhost:5000/mentorship/${id}`, { headers: { Authorization: `Bearer ${token}` } }),
-          fetch("http://localhost:5000/mentorship_regist", { headers: { Authorization: `Bearer ${token}` } })
+          fetch(`http://localhost:5000/mentorship/${id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("http://localhost:5000/mentorship_regist", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
         ]);
         if (!mentRes.ok) throw new Error("Failed to fetch mentorship detail");
         const data = await mentRes.json();
         setMentorship(data);
         if (regRes.ok && user) {
           const regList = await regRes.json();
-          const reg = regList.find(r => r.id_user === user.id_user && String(r.id_mentorship) === String(id));
+          const reg = regList.find(
+            (r) =>
+              r.id_user === user.id_user &&
+              String(r.id_mentorship) === String(id)
+          );
           if (reg) {
             setRegistration(reg);
             setShowWhatsapp(true);
@@ -70,17 +78,26 @@ export default function MentorshipDetail() {
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
-      let isJson = res.headers.get("content-type")?.includes("application/json");
+      let isJson = res.headers
+        .get("content-type")
+        ?.includes("application/json");
       if (!res.ok) {
         let errMsg = "Failed to register";
         if (isJson) {
           const errData = await res.json();
           errMsg = errData.msg || errMsg;
         }
-        notification.error({ message: "Registration Failed", description: errMsg });
+        notification.error({
+          message: "Registration Failed",
+          description: errMsg,
+        });
         throw new Error(errMsg);
       }
-      notification.success({ message: "Registration Success", description: "Registration successful! Click the WhatsApp button below to join the group." });
+      notification.success({
+        message: "Registration Success",
+        description:
+          "Registration successful! Click the WhatsApp button below to join the group.",
+      });
       setShowForm(false);
       setShowWhatsapp(true);
       form.resetFields();
@@ -93,6 +110,54 @@ export default function MentorshipDetail() {
 
   if (loading) return <div>Loading...</div>;
   if (error || !mentorship) return <div>Error: {error || "Not found"}</div>;
+
+  const style = document.createElement("style");
+  style.innerHTML = `
+  button, .ant-btn {
+    border: none !important;
+    box-shadow: none !important;
+  }
+  button:focus, button:active,
+  .ant-btn:focus, .ant-btn:active {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  button:hover, .ant-btn:hover {
+    background: #219150 !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: none !important;
+    transition: background 0.18s;
+  }
+  .no-hover-btn,
+  .no-hover-btn:hover,
+  .no-hover-btn:focus,
+  .no-hover-btn:active {
+    background: none !important;
+    color: #888 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  /* Perbaiki input agar border tetap muncul saat focus/active/hover */
+  input[type="text"], .ant-input {
+    border: 1px solid #d9d9d9 !important;
+    box-shadow: none !important;
+    outline: none !important;
+    transition: border-color 0.2s;
+  }
+  input[type="text"]:focus, .ant-input:focus {
+    border: 1.5px solid #27ae60 !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  input[type="text"]:hover, .ant-input:hover {
+    border: 1.5px solid #27ae60 !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+`;
+  document.head.appendChild(style);
 
   return (
     <div style={{ background: "#f9fafb", minHeight: "100vh", width: "100%" }}>
@@ -111,20 +176,77 @@ export default function MentorshipDetail() {
         }}
       >
         {/* Atas: deskripsi dan gambar, konsisten dengan index.jsx */}
-        <div style={{ display: "flex", width: "100%", gap: "3rem", alignItems: "flex-start", flexWrap: "wrap" }}>
+        <div
+          style={{
+            display: "flex",
+            width: "100%",
+            gap: "3rem",
+            alignItems: "flex-start",
+            flexWrap: "wrap",
+          }}
+        >
           <div style={{ flex: 1 }}>
-            <h1 style={{ fontWeight: "bold", fontSize: "2rem", marginBottom: "1.2rem" }}>Mentorship</h1>
-            <h2 style={{ fontWeight: "bold", fontSize: "1.5rem", marginBottom: "1.2rem" }}>{mentorship.title}</h2>
-            <div style={{ marginBottom: "2rem", fontSize: "1.1rem", color: "#444", lineHeight: 1.7, whiteSpace: "pre-line" }}>{mentorship.description}</div>
+            <h1
+              style={{
+                fontWeight: "bold",
+                fontSize: "2rem",
+                marginBottom: "1.2rem",
+              }}
+            >
+              Mentorship
+            </h1>
+            <h2
+              style={{
+                fontWeight: "bold",
+                fontSize: "1.5rem",
+                marginBottom: "1.2rem",
+              }}
+            >
+              {mentorship.title}
+            </h2>
+            <div
+              style={{
+                marginBottom: "2rem",
+                fontSize: "1.1rem",
+                color: "#444",
+                lineHeight: 1.7,
+                whiteSpace: "pre-line",
+              }}
+            >
+              {mentorship.description}
+            </div>
             {/* If registered, show registration data and WhatsApp button */}
             {registration ? (
-              <div style={{ marginBottom: 24, background: "#f6fef8", border: "1.5px solid #22c55e", borderRadius: 10, padding: 20, maxWidth: 520 }}>
-                <div style={{ fontWeight: 600, fontSize: 17, marginBottom: 10 }}>Your Registration Data</div>
-                <div style={{ marginBottom: 6 }}><b>Name:</b> {registration.name}</div>
-                <div style={{ marginBottom: 6 }}><b>Email:</b> {registration.email}</div>
-                <div style={{ marginBottom: 6 }}><b>Phone:</b> {registration.phone_number}</div>
-                <div style={{ marginBottom: 6 }}><b>Occupation:</b> {registration.occupation}</div>
-                <div style={{ marginBottom: 6 }}><b>Address:</b> {registration.address}</div>
+              <div
+                style={{
+                  marginBottom: 24,
+                  background: "#f6fef8",
+                  border: "1.5px solid #22c55e",
+                  borderRadius: 10,
+                  padding: 20,
+                  maxWidth: 520,
+                }}
+              >
+                <div
+                  style={{ fontWeight: 600, fontSize: 17, marginBottom: 10 }}
+                >
+                  Your Registration Data
+                </div>
+                <div style={{ marginBottom: 6 }}>
+                  <b>Name:</b> {registration.name}
+                </div>
+                <div style={{ marginBottom: 6 }}>
+                  <b>Email:</b> {registration.email}
+                </div>
+                <div style={{ marginBottom: 6 }}>
+                  <b>Phone:</b> {registration.phone_number}
+                </div>
+                <div style={{ marginBottom: 6 }}>
+                  <b>Occupation:</b> {registration.occupation}
+                </div>
+                <div style={{ marginBottom: 6 }}>
+                  <b>Address:</b> {registration.address}
+                </div>
                 <a
                   href={mentorship.mentorship_url}
                   target="_blank"
@@ -142,7 +264,7 @@ export default function MentorshipDetail() {
                     boxShadow: "0 2px 8px rgba(76,175,80,0.08)",
                     letterSpacing: 0.5,
                     transition: "background 0.18s",
-                    textAlign: "center"
+                    textAlign: "center",
                   }}
                 >
                   Join WhatsApp Group
@@ -150,13 +272,22 @@ export default function MentorshipDetail() {
               </div>
             ) : (
               <>
-                {!showWhatsapp && (
+                {!showWhatsapp && !showForm && (
                   <Button
                     type="primary"
-                    style={{ background: "#27ae60", border: "none", borderRadius: 8, fontWeight: 600, fontSize: 16, padding: "10px 32px", height: 44, marginBottom: 18 }}
-                    onClick={() => setShowForm((v) => !v)}
+                    style={{
+                      background: "#27ae60",
+                      border: "none",
+                      borderRadius: 8,
+                      fontWeight: 600,
+                      fontSize: 16,
+                      padding: "10px 32px",
+                      height: 44,
+                      marginBottom: 18,
+                    }}
+                    onClick={() => setShowForm(true)}
                   >
-                    {showForm ? "Tutup Form" : "Register"}
+                    Register
                   </Button>
                 )}
                 {showWhatsapp && (
@@ -177,7 +308,7 @@ export default function MentorshipDetail() {
                       boxShadow: "0 2px 8px rgba(76,175,80,0.08)",
                       letterSpacing: 0.5,
                       transition: "background 0.18s",
-                      textAlign: "center"
+                      textAlign: "center",
                     }}
                   >
                     Join WhatsApp Group
@@ -201,7 +332,9 @@ export default function MentorshipDetail() {
         </div>
         {/* Form horizontal Ant Design */}
         {!registration && showForm && !showWhatsapp && (
-          <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+          <div
+            style={{ width: "100%", display: "flex", justifyContent: "center" }}
+          >
             <Form
               form={form}
               layout="vertical"
@@ -221,36 +354,65 @@ export default function MentorshipDetail() {
               <Form.Item
                 name="name"
                 label="Full Name"
-                rules={[{ required: true, message: "Please enter your full name" }]}
-                style={{ display: "inline-block", width: "24%", minWidth: 200, marginRight: "1%" }}
+                rules={[
+                  { required: true, message: "Please enter your full name" },
+                ]}
+                style={{
+                  display: "inline-block",
+                  width: "24%",
+                  minWidth: 200,
+                  marginRight: "1%",
+                }}
               >
                 <Input placeholder="Enter your full name" size="large" />
               </Form.Item>
               <Form.Item
                 name="phone_number"
                 label="Phone Number"
-                rules={[{ required: true, message: "Please enter your phone number" }]}
-                style={{ display: "inline-block", width: "24%", minWidth: 200, marginRight: "1%" }}
+                rules={[
+                  { required: true, message: "Please enter your phone number" },
+                ]}
+                style={{
+                  display: "inline-block",
+                  width: "24%",
+                  minWidth: 200,
+                  marginRight: "1%",
+                }}
               >
                 <Input placeholder="Enter your phone number" size="large" />
               </Form.Item>
               <Form.Item
                 name="occupation"
                 label="Occupation"
-                rules={[{ required: true, message: "Please select your occupation" }]}
-                style={{ display: "inline-block", width: "24%", minWidth: 200, marginRight: "1%" }}
+                rules={[
+                  { required: true, message: "Please select your occupation" },
+                ]}
+                style={{
+                  display: "inline-block",
+                  width: "24%",
+                  minWidth: 200,
+                  marginRight: "1%",
+                }}
               >
                 <Select placeholder="Select your occupation" size="large">
                   <Select.Option value="Student">Student</Select.Option>
                   <Select.Option value="Employed">Employed</Select.Option>
                   <Select.Option value="Unemployed">Unemployed</Select.Option>
-                  <Select.Option value="Looking for a job">Looking for a job</Select.Option>
+                  <Select.Option value="Looking for a job">
+                    Looking for a job
+                  </Select.Option>
                 </Select>
               </Form.Item>
               <Form.Item
                 name="email"
                 label="Email"
-                rules={[{ required: true, type: "email", message: "Please enter a valid email" }]}
+                rules={[
+                  {
+                    required: true,
+                    type: "email",
+                    message: "Please enter a valid email",
+                  },
+                ]}
                 style={{ display: "inline-block", width: "24%", minWidth: 200 }}
               >
                 <Input placeholder="Enter your email" size="large" />
@@ -258,14 +420,54 @@ export default function MentorshipDetail() {
               <Form.Item
                 name="address"
                 label="Address"
-                rules={[{ required: true, message: "Please enter your address" }]}
+                rules={[
+                  { required: true, message: "Please enter your address" },
+                ]}
                 style={{ width: "100%", marginTop: 8 }}
               >
                 <Input placeholder="Enter your address" size="large" />
               </Form.Item>
-              <div style={{ width: "100%", display: "flex", justifyContent: "flex-end", gap: 12, alignItems: "center", marginTop: 8 }}>
-                <Button onClick={handleCancel} style={{ background: "#fff", color: "#888", border: "1px solid #bbb", borderRadius: 8, fontWeight: 500, fontSize: 15, padding: "9px 24px" }}>Cancel</Button>
-                <Button type="primary" htmlType="submit" loading={submitting} style={{ background: "#27ae60", border: "none", borderRadius: 8, fontWeight: 600, fontSize: 15, padding: "9px 32px" }}>Submit</Button>
+              <div
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: 12,
+                  alignItems: "center",
+                  marginTop: 8,
+                }}
+              >
+                <Button
+                  className="no-hover-btn"
+                  onClick={handleCancel}
+                  style={{
+                    background: "none",
+                    color: "#888",
+                    border: "none",
+                    borderRadius: 8,
+                    fontWeight: 500,
+                    fontSize: 15,
+                    padding: "9px 24px",
+                    boxShadow: "none",
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={submitting}
+                  style={{
+                    background: "#27ae60",
+                    border: "none",
+                    borderRadius: 8,
+                    fontWeight: 600,
+                    fontSize: 15,
+                    padding: "9px 32px",
+                  }}
+                >
+                  Submit
+                </Button>
               </div>
             </Form>
           </div>

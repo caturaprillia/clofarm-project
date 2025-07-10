@@ -177,6 +177,23 @@
   line-height: 1;
 }
 
+.login-form input.input {
+  border: 1.5px solid #bdbdbd !important;
+  border-radius: 10px !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: #fff !important;
+  transition: border-color 0.2s;
+}
+.login-form input.input:hover,
+.login-form input.input:focus,
+.login-form input.input:active {
+  border: 1.5px solid #32a960 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: #fff !important;
+}
+
 @media (max-width: 900px) {
   .auth-container {
     flex-direction: column;

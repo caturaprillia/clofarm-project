@@ -146,7 +146,7 @@ export default function TutorialPage() {
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "flex-start",
-    padding: "0 0 18px 0"
+    padding: "0 0 18px 0",
   };
   const imgStyle = {
     width: "90%",
@@ -155,14 +155,14 @@ export default function TutorialPage() {
     display: "block",
     objectFit: "cover",
     borderRadius: 8,
-    background: "#e5e7eb"
+    background: "#e5e7eb",
   };
   const titleStyle = {
     fontWeight: 700,
     fontSize: 19,
     margin: "16px 0 8px 0",
     color: "#111827",
-    textAlign: "left"
+    textAlign: "left",
   };
   const descStyle = {
     color: "#6b7280",
@@ -170,7 +170,7 @@ export default function TutorialPage() {
     marginBottom: 18,
     fontFamily: "Poppins, sans-serif",
     lineHeight: 1.5,
-    textAlign: "left"
+    textAlign: "left",
   };
   const btnStyle = {
     background: "#27ae60",
@@ -187,7 +187,7 @@ export default function TutorialPage() {
     transition: "background 0.18s",
     textAlign: "center",
     textDecoration: "none",
-    display: "block"
+    display: "block",
   };
 
   return (
@@ -267,7 +267,7 @@ export default function TutorialPage() {
             display: "flex",
             alignItems: "flex-start",
             gap: 64,
-            marginBottom: 0
+            marginBottom: 0,
           }}
         >
           {/* Stepper section here (map for steps 1-4) */}
@@ -338,11 +338,55 @@ export default function TutorialPage() {
             </div>
             {/* Card tutorial asli */}
             {filteredTutorials.map((tutorial) => (
-              <div key={tutorial.id_tutorials} style={cardStyle}>
-                <img src={tutorial.thumbnail_url || cardImg} alt={tutorial.title} style={imgStyle} />
-                <div style={titleStyle}>{tutorial.title}</div>
-                <div style={descStyle}>{tutorial.description}</div>
-                <a href={tutorial.tutorial_url} target="_blank" rel="noopener noreferrer" style={btnStyle}>See Tutorial</a>
+              <div key={tutorial.id_tutorials} style={styles.card}>
+                <img
+                  src={tutorial.thumbnail_url || cardImg}
+                  alt={tutorial.title}
+                  style={{
+                    width: "90%",
+                    height: "160px",
+                    margin: "16px auto 0 auto",
+                    display: "block",
+                    objectFit: "cover",
+                    borderRadius: "8px",
+                    background: "#f0f0f0",
+                  }}
+                />
+                <div style={styles.cardContent}>
+                  <h3 style={styles.cardTitle}>{tutorial.title}</h3>
+                  <p style={styles.cardDescription}>{tutorial.description}</p>
+                </div>
+                <div style={{ padding: "0 12px 12px 12px" }}>
+                  <a
+                    href={tutorial.tutorial_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      width: "100%",
+                      display: "block",
+                      background: "#27ae60",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: "6px",
+                      padding: "7px 0",
+                      fontWeight: "bold",
+                      textAlign: "center",
+                      textDecoration: "none",
+                      fontSize: "1.05rem",
+                      transition: "background 0.2s, color 0.2s",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.background = "#219150";
+                      e.target.style.color = "#fff";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.background = "#27ae60";
+                      e.target.style.color = "#fff";
+                    }}
+                  >
+                    See Tutorial
+                  </a>
+                </div>
               </div>
             ))}
           </div>
@@ -462,13 +506,13 @@ const styles = {
     fontWeight: 600,
     color: "#222",
     fontFamily: '"Poppins", sans-serif',
-    textAlign: "left"
+    textAlign: "left",
   },
   cardDescription: {
     margin: 0,
     fontSize: 16,
     color: "#888",
     fontFamily: '"Poppins", sans-serif',
-    textAlign: "left"
+    textAlign: "left",
   },
 };

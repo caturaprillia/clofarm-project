@@ -16,6 +16,26 @@ style.innerHTML = `
 `;
 document.head.appendChild(style);
 
+const styleHover = document.createElement("style");
+styleHover.innerHTML = `
+  button:hover, .ant-btn:hover {
+    background: #219150 !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: none !important;
+    transition: background 0.18s;
+  }
+  button:focus, button:active,
+  .ant-btn:focus, .ant-btn:active {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: #219150 !important;
+    color: #fff !important;
+  }
+`;
+document.head.appendChild(styleHover);
+
 export default function Mentorship() {
   const [search, setSearch] = useState("");
   const [expandedCard, setExpandedCard] = useState(null);
@@ -34,8 +54,12 @@ export default function Mentorship() {
         const token = localStorage.getItem("token");
         if (!token) throw new Error("Token not found. Please login again.");
         const [mentorshipRes, registRes] = await Promise.all([
-          fetch("http://localhost:5000/mentorship", { headers: { Authorization: `Bearer ${token}` } }),
-          fetch("http://localhost:5000/mentorship_regist", { headers: { Authorization: `Bearer ${token}` } })
+          fetch("http://localhost:5000/mentorship", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("http://localhost:5000/mentorship_regist", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
         ]);
         if (!mentorshipRes.ok) {
           const errData = await mentorshipRes.json();
@@ -65,22 +89,48 @@ export default function Mentorship() {
   );
 
   // Get joined mentorship ids for this user
-  const joinedIds = user ? registrations.filter(r => r.id_user === user.id_user).map(r => r.id_mentorship) : [];
-  const joinedMentorships = filteredMentorships.filter(m => joinedIds.includes(m.id_mentorship));
-  const notJoinedMentorships = filteredMentorships.filter(m => !joinedIds.includes(m.id_mentorship));
+  const joinedIds = user
+    ? registrations
+        .filter((r) => r.id_user === user.id_user)
+        .map((r) => r.id_mentorship)
+    : [];
+  const joinedMentorships = filteredMentorships.filter((m) =>
+    joinedIds.includes(m.id_mentorship)
+  );
+  const notJoinedMentorships = filteredMentorships.filter(
+    (m) => !joinedIds.includes(m.id_mentorship)
+  );
 
   const maxDesc = 50;
 
   if (loading) {
     return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "50vh", fontSize: 18, color: "#666" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "50vh",
+          fontSize: 18,
+          color: "#666",
+        }}
+      >
         Loading mentorships...
       </div>
     );
   }
   if (error) {
     return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "50vh", fontSize: 18, color: "#e74c3c" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "50vh",
+          fontSize: 18,
+          color: "#e74c3c",
+        }}
+      >
         Error: {error}
       </div>
     );
@@ -160,10 +210,27 @@ export default function Mentorship() {
           />
         </div>
         {/* Joined Programs Section */}
-        <h2 style={{ fontSize: 22, fontWeight: 600, margin: "32px 0 18px 0" }}>Programs You've Joined</h2>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "25px", width: "100%" }}>
+        <h2 style={{ fontSize: 22, fontWeight: 600, margin: "32px 0 18px 0" }}>
+          Programs You've Joined
+        </h2>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(4, 1fr)",
+            gap: "25px",
+            width: "100%",
+          }}
+        >
           {joinedMentorships.length === 0 ? (
-            <div style={{ gridColumn: "span 4", color: "#888", fontSize: 17, textAlign: "center", padding: 32 }}>
+            <div
+              style={{
+                gridColumn: "span 4",
+                color: "#888",
+                fontSize: 17,
+                textAlign: "center",
+                padding: 32,
+              }}
+            >
               You haven't joined any mentorship programs yet.
             </div>
           ) : (
@@ -256,20 +323,26 @@ export default function Mentorship() {
                             whiteSpace: "pre-line",
                           }}
                         >
-                          {m.description && m.description.length > 100
-                            ? (
-                                <>
-                                  {m.description.slice(0, 100)}...
-                                  <span
-                                    style={{ color: "#27ae60", cursor: "pointer", marginLeft: 6, fontWeight: 500 }}
-                                    onClick={() => navigate(`/mentorship/${m.id_mentorship}`)}
-                                  >
-                                    See more
-                                  </span>
-                                </>
-                              )
-                            : m.description
-                          }
+                          {m.description && m.description.length > 100 ? (
+                            <>
+                              {m.description.slice(0, 100)}...
+                              <span
+                                style={{
+                                  color: "#27ae60",
+                                  cursor: "pointer",
+                                  marginLeft: 6,
+                                  fontWeight: 500,
+                                }}
+                                onClick={() =>
+                                  navigate(`/mentorship/${m.id_mentorship}`)
+                                }
+                              >
+                                See more
+                              </span>
+                            </>
+                          ) : (
+                            m.description
+                          )}
                         </div>
                       )}
                     </div>
@@ -289,7 +362,7 @@ export default function Mentorship() {
                         transition: "background 0.18s",
                         textAlign: "center",
                         textDecoration: "none",
-                        display: "block"
+                        display: "block",
                       }}
                       onClick={() => navigate(`/mentorship/${m.id_mentorship}`)}
                     >
@@ -302,10 +375,27 @@ export default function Mentorship() {
           )}
         </div>
         {/* Not Joined Programs Section */}
-        <h2 style={{ fontSize: 22, fontWeight: 600, margin: "32px 0 18px 0" }}>Available Programs</h2>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "25px", width: "100%" }}>
+        <h2 style={{ fontSize: 22, fontWeight: 600, margin: "32px 0 18px 0" }}>
+          Available Programs
+        </h2>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(4, 1fr)",
+            gap: "25px",
+            width: "100%",
+          }}
+        >
           {notJoinedMentorships.length === 0 ? (
-            <div style={{ gridColumn: "span 4", color: "#888", fontSize: 17, textAlign: "center", padding: 32 }}>
+            <div
+              style={{
+                gridColumn: "span 4",
+                color: "#888",
+                fontSize: 17,
+                textAlign: "center",
+                padding: 32,
+              }}
+            >
               No available mentorship programs at the moment.
             </div>
           ) : (
@@ -398,20 +488,26 @@ export default function Mentorship() {
                             whiteSpace: "pre-line",
                           }}
                         >
-                          {m.description && m.description.length > 100
-                            ? (
-                                <>
-                                  {m.description.slice(0, 100)}...
-                                  <span
-                                    style={{ color: "#27ae60", cursor: "pointer", marginLeft: 6, fontWeight: 500 }}
-                                    onClick={() => navigate(`/mentorship/${m.id_mentorship}`)}
-                                  >
-                                    See more
-                                  </span>
-                                </>
-                              )
-                            : m.description
-                          }
+                          {m.description && m.description.length > 100 ? (
+                            <>
+                              {m.description.slice(0, 100)}...
+                              <span
+                                style={{
+                                  color: "#27ae60",
+                                  cursor: "pointer",
+                                  marginLeft: 6,
+                                  fontWeight: 500,
+                                }}
+                                onClick={() =>
+                                  navigate(`/mentorship/${m.id_mentorship}`)
+                                }
+                              >
+                                See more
+                              </span>
+                            </>
+                          ) : (
+                            m.description
+                          )}
                         </div>
                       )}
                     </div>
@@ -431,7 +527,7 @@ export default function Mentorship() {
                         transition: "background 0.18s",
                         textAlign: "center",
                         textDecoration: "none",
-                        display: "block"
+                        display: "block",
                       }}
                       onClick={() => navigate(`/mentorship/${m.id_mentorship}`)}
                     >
