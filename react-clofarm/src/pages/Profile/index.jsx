@@ -117,6 +117,31 @@ const Profile = () => {
           outline: none !important;
           box-shadow: none !important;
         }
+        /* Custom Popconfirm Yes button color */
+        .ant-popconfirm .ant-btn-primary {
+          background: #27ae60 !important;
+          border-color: #27ae60 !important;
+          color: #fff !important;
+        }
+        .ant-popconfirm .ant-btn-primary:hover, .ant-popconfirm .ant-btn-primary:focus {
+          background: #219150 !important;
+          border-color: #219150 !important;
+          color: #fff !important;
+        }
+        /* Disabled username input style */
+        .profile-input input[disabled] {
+          background: #f5f5f5 !important;
+          color: #aaa !important;
+          cursor: not-allowed !important;
+          border: 1.5px solid #e0e0e0 !important;
+        }
+        .profile-input input[disabled]:hover,
+        .profile-input input[disabled]:focus {
+          background: #f5f5f5 !important;
+          color: #aaa !important;
+          border: 1.5px solid #e0e0e0 !important;
+          box-shadow: none !important;
+        }
       `}</style>
       <div
         style={{

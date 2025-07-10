@@ -156,7 +156,7 @@ const cardStyle = {
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "flex-start",
-  padding: "0 0 18px 0"
+  padding: "0 0 18px 0",
 };
 const imgStyle = {
   width: "90%",
@@ -165,14 +165,14 @@ const imgStyle = {
   display: "block",
   objectFit: "cover",
   borderRadius: 8,
-  background: "#e5e7eb"
+  background: "#e5e7eb",
 };
 const titleStyle = {
   fontWeight: 700,
   fontSize: 19,
   margin: "16px 0 8px 0",
   color: "#111827",
-  textAlign: "center"
+  textAlign: "center",
 };
 const infoStyle = {
   color: "#6b7280",
@@ -180,7 +180,7 @@ const infoStyle = {
   marginBottom: 18,
   fontFamily: "Poppins, sans-serif",
   lineHeight: 1.5,
-  textAlign: "center"
+  textAlign: "center",
 };
 const btnStyle = {
   background: "#27ae60",
@@ -197,7 +197,7 @@ const btnStyle = {
   transition: "background 0.18s",
   textAlign: "center",
   textDecoration: "none",
-  display: "block"
+  display: "block",
 };
 
 // Komponen Card
@@ -214,15 +214,23 @@ const AgrotourismCard = ({
     <div style={titleStyle}>{name}</div>
     <div style={infoStyle}>
       <span style={{ display: "block", marginBottom: 2 }}>
-        <i className="fas fa-map-marker-alt" style={{ color: "#27ae60", marginRight: 6 }} />
+        <i
+          className="fas fa-map-marker-alt"
+          style={{ color: "#27ae60", marginRight: 6 }}
+        />
         {city}, {province}
       </span>
       <span style={{ display: "block" }}>
-        <i className="fas fa-dollar-sign" style={{ color: "#27ae60", marginRight: 6 }} />
+        <i
+          className="fas fa-dollar-sign"
+          style={{ color: "#27ae60", marginRight: 6 }}
+        />
         Rp. {Number(ticket_price).toLocaleString()}
       </span>
     </div>
-    <button onClick={onSeeDetails} style={btnStyle}>See Details</button>
+    <button onClick={onSeeDetails} style={btnStyle}>
+      See Details
+    </button>
   </div>
 );
 
